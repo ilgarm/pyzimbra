@@ -6,7 +6,7 @@ import unittest
 from pyzimbra import zutil
 
 
-class Test(unittest.TestCase):
+class ZUtilTest(unittest.TestCase):
 
     # -------------------------------------------------------------------- tests
     def testEmptyHostname(self):
