@@ -6,7 +6,7 @@ import unittest
 from pyzimbra import util
 
 
-class Test(unittest.TestCase):
+class UtilTest(unittest.TestCase):
 
     # -------------------------------------------------------------------- tests
     def testEmptyNone(self):

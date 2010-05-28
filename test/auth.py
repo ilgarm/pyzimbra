@@ -7,7 +7,7 @@ from pyzimbra import auth
 from ConfigParser import ConfigParser
 
 
-class Test(unittest.TestCase):
+class AuthTest(unittest.TestCase):
 
     # ------------------------------------------------------------------ unbound
     def setUp(self):
@@ -16,10 +16,11 @@ class Test(unittest.TestCase):
         cfg.read(properties)
 
         self.domain = cfg.get("domain", "name")
+        self.hostname = cfg.get("domain", "host")
         self.domain_key = cfg.get("domain", "key")
 
-        self.username = "username"
-        self.password = "password"
+        self.username = cfg.get("auth", "username")
+        self.password = cfg.get("auth", "password")
 
     def tearDown(self):
         pass
@@ -28,7 +29,8 @@ class Test(unittest.TestCase):
     # -------------------------------------------------------------------- tests
     def testAuthEmptyCredentials(self):
         a = auth.Authenticator()
-        a.endpoint = "http://%s" % self.domain
+        a.hostname = self.hostname
+        a.domain = self.domain
         a.domain_key = self.domain_key
 
         self.assertRaises(auth.AuthException, a.authenticate, "", self.password)
@@ -38,7 +40,8 @@ class Test(unittest.TestCase):
 
     def testAuthValidCredentials(self):
         a = auth.Authenticator()
-        a.endpoint = "http://%s" % self.domain
+        a.hostname = self.hostname
+        a.domain = self.domain
         a.domain_key = self.domain_key
 
         ztoken = a.authenticate(self.username, self.password)
@@ -50,7 +53,8 @@ class Test(unittest.TestCase):
 
     def testAuthInvalidCredentials(self):
         a = auth.Authenticator()
-        a.endpoint = "http://%s" % self.domain
+        a.hostname = self.hostname
+        a.domain = self.domain
         a.domain_key = self.domain_key
 
         self.assertRaises(auth.AuthException,
