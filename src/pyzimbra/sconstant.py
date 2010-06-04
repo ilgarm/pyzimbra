@@ -10,7 +10,11 @@ BODY = 'Body'
 CONTEXT = 'context'
 
 AuthRequest = 'AuthRequest'
+AuthResponse = 'AuthResponse'
 
+E_AUTH_TOKEN = 'authToken'
+E_SESSION_ID = 'sessionId'
+E_LIFE_TIME = 'lifetime'
 E_ACCOUNT = 'account'
 E_PASSWORD = 'password'
 E_VHOST = 'virtualHost'

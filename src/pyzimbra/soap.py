@@ -2,45 +2,32 @@
 """
 @author: ilgar
 """
-from pyzimbra import zconstant, sconstant
-import urllib2
-import gzip
-import io
 from lxml import etree
+from pyzimbra import zconstant, sconstant
+from pyzimbra.zutil import ZClientException
+import lxml
 
 
-def send_request(url, req):
+class SoapException(ZClientException):
     """
-    Sends request to zimbra endpoint and extracts payload
+    Soap exception.
     """
-    env = prepare_soap_envelope(req)
-
-    encoded = env
-    headers = { 'User-Agent' : zconstant.USER_AGENT,
-               'Accept-encoding' : 'gzip' }
-    request = urllib2.Request(url, encoded, headers)
-    response = urllib2.urlopen(request)
-    data = response.read()
-
-    if hasattr(response, 'headers'):
-        if response.headers.get('content-encoding', '') == 'gzip':
-            data = gzip.GzipFile(fileobj=io.StringIO(data)).read()
-
-    return data
 
 
-def prepare_soap_envelope(payload):
+def wrap_soap_payload(payload):
     """
     Wraps zimbra xml request into soap envelope
     @param payload: zimbra xml request
     """
-    env = etree.Element(zconstant.NS_SOAP + sconstant.ENVELOPE,
-                             nsmap=zconstant.NS_SOAP_MAP)
-    header = etree.SubElement(env, zconstant.NS_SOAP + sconstant.HEADER)
+    env = etree.Element('%s%s' % (zconstant.NS_SOAP, sconstant.ENVELOPE),
+                        nsmap=zconstant.NS_SOAP_MAP)
+
+#    header = etree.SubElement(env, zconstant.NS_SOAP + sconstant.HEADER)
     body = etree.SubElement(env, zconstant.NS_SOAP + sconstant.BODY)
 
-    context = etree.SubElement(header, sconstant.CONTEXT,
-                                    nsmap=zconstant.NS_ZIMBRA_MAP)
+    # TODO process context
+#    context = etree.SubElement(header, sconstant.CONTEXT,
+#                               nsmap=zconstant.NS_ZIMBRA_MAP)
 
     body.clear()
     body.insert(0, payload)
@@ -48,23 +35,21 @@ def prepare_soap_envelope(payload):
     return etree.tounicode(env, pretty_print=True)
 
 
-def prepare_auth_request(domain, username, password):
+def unwrap_soap_payload(env):
     """
-    Prepares zimbra auth request
-    """
-    req = etree.Element(sconstant.AuthRequest,
-                             nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
+    Unwraps soap envelope to zimbra xml response
+    @param env: soap envelope
+    """ 
+    tree = lxml.etree.fromstring(env)
 
-    account = etree.SubElement(req, sconstant.E_ACCOUNT,
-                                    attrib={sconstant.A_BY: sconstant.A_NAME})
-    account.text = username
+    # TODO process context
+    body_list = tree.xpath('/%s:%s/%s:%s/*[1]' % (zconstant.NS_SOAP_PREFIX,
+                                           sconstant.ENVELOPE,
+                                           zconstant.NS_SOAP_PREFIX,
+                                           sconstant.BODY),
+                           namespaces = zconstant.NS_SOAP_MAP)
 
-    passwd = etree.SubElement(req, sconstant.E_PASSWORD)
-    passwd.text = password
+    if len(body_list) == 0:
+        raise SoapException('Unable to get soap body')
 
-    vhost = etree.SubElement(req, sconstant.E_VHOST)
-    vhost.text = domain
-
-    return req
-
-
+    return body_list[0]

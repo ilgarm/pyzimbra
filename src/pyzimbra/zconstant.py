@@ -8,7 +8,8 @@ SOAP_URL = '/service/soap'
 USER_AGENT = 'ZimbraPython/1.0 +http://localhost/'
 
 NS_SOAP_URL = 'http://www.w3.org/2003/05/soap-envelope'
-NS_SOAP_MAP = {'soap': NS_SOAP_URL}
+NS_SOAP_PREFIX = 'soap'
+NS_SOAP_MAP = {NS_SOAP_PREFIX: NS_SOAP_URL}
 NS_SOAP = '{%s}' % NS_SOAP_URL
 
 NS_ZIMBRA_URL = 'urn:zimbra'

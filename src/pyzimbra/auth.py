@@ -2,30 +2,17 @@
 """
 @author: ilgar
 """
-from pyzimbra import util, zutil, soap
+from lxml import etree
+from pyzimbra import util, zutil, soap, sconstant, zconstant, soap_transport
+from pyzimbra.zutil import ZClientException
+from xml.dom import minidom
 import urllib2
 
 
-class AuthException(Exception):
+class AuthException(ZClientException):
     """
     Authentication exception.
     """
-    title = property(lambda self: self._title, 
-                     lambda self, v: setattr(self, '_title', v))
-    message = property(lambda self: self._message, 
-                       lambda self, v: setattr(self, '_message', v))
-
-    # -------------------------------------------------------------------- bound
-    def __init__(self, message, title = None, show_traceback = False):
-        Exception.__init__(self, message)
-
-        self._message = message
-        if title:
-            self._title = title
-        self.show_traceback = show_traceback
-
-    def __unicode__(self):
-        return unicode(self.message)
 
 
 class AuthToken(object):
@@ -85,16 +72,43 @@ class Authenticator(object):
             raise AuthException('Empty password')
 
         url = zutil.soap_url(self.hostname)
-        req = soap.prepare_auth_request(self.hostname,
-                                        '%s@%s' % (username, self.domain),
-                                        password)
+
+        req = etree.Element(sconstant.AuthRequest,
+                            nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
+
+        account = etree.SubElement(req, sconstant.E_ACCOUNT,
+                                   attrib={sconstant.A_BY: sconstant.A_NAME})
+        account.text = '%s@%s' % (username, self.domain)
+
+        passwd = etree.SubElement(req, sconstant.E_PASSWORD)
+        passwd.text = password
+
+        vhost = etree.SubElement(req, sconstant.E_VHOST)
+        vhost.text = self.hostname
+
+        res = None
         try:
-            res = soap.send_request(url, req)
+            res = soap_transport.send_request(url, req)
         except urllib2.HTTPError:
             raise AuthException('Authentication failed')
 
+        xmldoc = minidom.parseString(etree.tostring(res))
+        xmldoc.getElementsByTagNameNS(zconstant.NS_ZIMBRA_ACC_URL,
+                                      sconstant.AuthResponse)
+
         token = AuthToken()
-        token.token = "some token here"
-        token.session_id = "some session id here"
+
+        node = xmldoc.getElementsByTagName(sconstant.E_AUTH_TOKEN)
+        token.token = getText(node[0].childNodes)
+
+        node = xmldoc.getElementsByTagName(sconstant.E_SESSION_ID)
+        token.session_id = getText(node[0].childNodes)
 
         return token
+
+def getText(nodelist):
+    rc = []
+    for node in nodelist:
+        if node.nodeType == node.TEXT_NODE:
+            rc.append(node.data)
+    return ''.join(rc)
