@@ -2,9 +2,9 @@
 """
 @author: ilgar
 """
-import unittest
-from pyzimbra import auth
 from ConfigParser import ConfigParser
+from pyzimbra import auth
+import unittest
 
 
 class AuthTest(unittest.TestCase):

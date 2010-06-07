@@ -2,8 +2,8 @@
 """
 @author: ilgar
 """
-import unittest
 from pyzimbra import zutil
+import unittest
 
 
 class ZUtilTest(unittest.TestCase):

@@ -2,11 +2,12 @@
 """
 @author: ilgar
 """
+from lxml import etree
+from pyzimbra import zconstant
 from pyzimbra.soap import wrap_soap_payload, unwrap_soap_payload
 import gzip
 import io
 import urllib2
-from pyzimbra import zconstant
 
 
 def send_request(url, req):
@@ -14,8 +15,8 @@ def send_request(url, req):
     Sends request to zimbra endpoint and extracts payload
     """
     env = wrap_soap_payload(req)
+    encoded = etree.tounicode(env)
 
-    encoded = env
     headers = { 'User-Agent' : zconstant.USER_AGENT,
                'Accept-encoding' : 'gzip' }
     request = urllib2.Request(url, encoded, headers)

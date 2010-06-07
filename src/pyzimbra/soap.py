@@ -22,7 +22,8 @@ def wrap_soap_payload(payload):
     env = etree.Element('%s%s' % (zconstant.NS_SOAP, sconstant.ENVELOPE),
                         nsmap=zconstant.NS_SOAP_MAP)
 
-#    header = etree.SubElement(env, zconstant.NS_SOAP + sconstant.HEADER)
+#    header = 
+    etree.SubElement(env, zconstant.NS_SOAP + sconstant.HEADER)
     body = etree.SubElement(env, zconstant.NS_SOAP + sconstant.BODY)
 
     # TODO process context
@@ -32,18 +33,18 @@ def wrap_soap_payload(payload):
     body.clear()
     body.insert(0, payload)
 
-    return etree.tounicode(env, pretty_print=True)
+    return env
 
 
-def unwrap_soap_payload(env):
+def unwrap_soap_payload(str):
     """
     Unwraps soap envelope to zimbra xml response
     @param env: soap envelope
     """ 
-    tree = lxml.etree.fromstring(env)
+    env = lxml.etree.fromstring(str)
 
     # TODO process context
-    body_list = tree.xpath('/%s:%s/%s:%s/*[1]' % (zconstant.NS_SOAP_PREFIX,
+    body_list = env.xpath('/%s:%s/%s:%s/*[1]' % (zconstant.NS_SOAP_PREFIX,
                                            sconstant.ENVELOPE,
                                            zconstant.NS_SOAP_PREFIX,
                                            sconstant.BODY),

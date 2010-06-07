@@ -3,9 +3,8 @@
 @author: ilgar
 """
 from lxml import etree
-from pyzimbra import util, zutil, soap, sconstant, zconstant, soap_transport
+from pyzimbra import util, zutil, sconstant, zconstant, soap_transport
 from pyzimbra.zutil import ZClientException
-from xml.dom import minidom
 import urllib2
 
 
@@ -58,7 +57,7 @@ class Authenticator(object):
     def authenticate(self, username, password):
         """
         Authenticates account.
-        
+
         @param username: account name, can be local part or full email
         @param password: account password
         
@@ -92,23 +91,10 @@ class Authenticator(object):
         except urllib2.HTTPError:
             raise AuthException('Authentication failed')
 
-        xmldoc = minidom.parseString(etree.tostring(res))
-        xmldoc.getElementsByTagNameNS(zconstant.NS_ZIMBRA_ACC_URL,
-                                      sconstant.AuthResponse)
-
         token = AuthToken()
-
-        node = xmldoc.getElementsByTagName(sconstant.E_AUTH_TOKEN)
-        token.token = getText(node[0].childNodes)
-
-        node = xmldoc.getElementsByTagName(sconstant.E_SESSION_ID)
-        token.session_id = getText(node[0].childNodes)
+        token.token = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
+                                             sconstant.E_AUTH_TOKEN))
+        token.session_id = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
+                                                  sconstant.E_SESSION_ID))
 
         return token
-
-def getText(nodelist):
-    rc = []
-    for node in nodelist:
-        if node.nodeType == node.TEXT_NODE:
-            rc.append(node.data)
-    return ''.join(rc)
