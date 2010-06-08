@@ -1,33 +1,52 @@
 # -*- coding: utf-8 -*-
 """
+Authentication related methods and classes.
+
 @author: ilgar
 """
-from lxml import etree
-from pyzimbra import util, zutil, sconstant, zconstant, soap_transport
-from pyzimbra.zutil import ZClientException
-import urllib2
+from pyzimbra import util
+from pyzimbra.base import ZimbraClientTransport, ZimbraClientException
+import abc
 
 
-class AuthException(ZClientException):
+class AuthException(Exception):
     """
     Authentication exception.
     """
+    # --------------------------------------------------------------- properties
+    title = property(lambda self: self._title, 
+                     lambda self, v: setattr(self, '_title', v))
+    message = property(lambda self: self._message, 
+                       lambda self, v: setattr(self, '_message', v))
+
+    # -------------------------------------------------------------------- bound
+    def __init__(self, message, title = None, show_traceback = False):
+        Exception.__init__(self, message)
+
+        self._message = message
+        if title:
+            self._title = title
+        self.show_traceback = show_traceback
+
+    def __unicode__(self):
+        return unicode(self.message)
 
 
 class AuthToken(object):
     """
     AuthToken holds current authentication token and sessions id.
     """
+    # --------------------------------------------------------------- properties
     token = property(lambda self: self._token,
                      lambda self, v: setattr(self, '_token', v))
     session_id = property(lambda self: self._session_id,
                           lambda self, v: setattr(self, '_session_id', v))
 
 
+    # -------------------------------------------------------------------- bound
     def __init__(self):
-        """
-        Constructor
-        """
+        self.token = None
+        self.session_id = None
 
 
 class Authenticator(object):
@@ -35,66 +54,30 @@ class Authenticator(object):
     Authenticator provides methods to authenticate using username/password 
     as a user or administrator or using domain key.
     """
+    __metaclass__ = abc.ABCMeta
+
     # --------------------------------------------------------------- properties
-    hostname = property(lambda self: self._hostname,
-                        lambda self, v: setattr(self, '_hostname', v))
-    domain = property(lambda self: self._domain,
-                      lambda self, v: setattr(self, '_domain', v))
-    domain_key = property(lambda self: self._domain_key,
-                          lambda self, v: setattr(self, '_domain_key', v))
-    username = property(lambda self: self._username,
-                        lambda self, v: setattr(self, '_username', v))
-    password = property(lambda self: self._password,
-                        lambda self, v: setattr(self, '_password', v))
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
-        """
-        Constructor
-        """
+        pass
 
     # ------------------------------------------------------------------ unbound
-    def authenticate(self, username, password):
+    @abc.abstractmethod
+    def authenticate(self, transport, account_name, password):
         """
         Authenticates account.
-
-        @param username: account name, can be local part or full email
+        @param transport: transport to use for method calls
+        @param account_name: account name
         @param password: account password
-        
-        @raise AuthException: if authentication fails
         @return: AuthToken if authentication succeeded
+        @raise AuthException: if authentication fails
         """
-        if util.empty(username):
-            raise AuthException('Empty username')
+        if not isinstance(transport, ZimbraClientTransport):
+            raise ZimbraClientException('Invalid transport')
+
+        if util.empty(account_name):
+            raise AuthException('Empty account name')
 
         if util.empty(password):
             raise AuthException('Empty password')
-
-        url = zutil.soap_url(self.hostname)
-
-        req = etree.Element(sconstant.AuthRequest,
-                            nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-
-        account = etree.SubElement(req, sconstant.E_ACCOUNT,
-                                   attrib={sconstant.A_BY: sconstant.A_NAME})
-        account.text = '%s@%s' % (username, self.domain)
-
-        passwd = etree.SubElement(req, sconstant.E_PASSWORD)
-        passwd.text = password
-
-        vhost = etree.SubElement(req, sconstant.E_VHOST)
-        vhost.text = self.hostname
-
-        res = None
-        try:
-            res = soap_transport.send_request(url, req)
-        except urllib2.HTTPError:
-            raise AuthException('Authentication failed')
-
-        token = AuthToken()
-        token.token = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                             sconstant.E_AUTH_TOKEN))
-        token.session_id = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                                  sconstant.E_SESSION_ID))
-
-        return token

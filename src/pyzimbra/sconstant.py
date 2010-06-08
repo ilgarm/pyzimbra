@@ -11,6 +11,8 @@ CONTEXT = 'context'
 
 AuthRequest = 'AuthRequest'
 AuthResponse = 'AuthResponse'
+GetInfoRequest = 'GetInfoRequest'
+GetInfoResponse = 'GetInfoResponse'
 
 E_AUTH_TOKEN = 'authToken'
 E_SESSION_ID = 'sessionId'

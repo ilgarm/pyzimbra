@@ -1,26 +1,23 @@
 # -*- coding: utf-8 -*-
 """
+Test related methods and classes.
+
 @author: ilgar
 """
-from pyzimbra import util
-import unittest
+from ConfigParser import ConfigParser
 
 
-class UtilTest(unittest.TestCase):
+def load_test_properties(test):
+    cfg = ConfigParser()
+    if len(cfg.read("test.properties")) == 0:
+        cfg.read("../test.properties")
 
-    # -------------------------------------------------------------------- tests
-    def testEmptyNone(self):
-        result = util.empty(None)
-        self.assertEqual(True, result)
+    test.domain = cfg.get("domain", "name")
+    test.hostname = cfg.get("domain", "host")
+    test.domain_key = cfg.get("domain", "key")
 
-    def testEmptyString(self):
-        result = util.empty("")
-        self.assertEqual(True, result)
-
-    def testNotEmptyString(self):
-        result = util.empty("some string")
-        self.assertEqual(False, result)
-
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+    test.username = cfg.get("auth", "username")
+    test.account_name = '%s@%s' % (test.username, test.domain)
+    test.password = cfg.get("auth", "password")
+    test.token = cfg.get("auth", "token")
+    test.session_id = cfg.get("auth", "session_id")
