@@ -26,15 +26,18 @@ class AuthTest(BaseTest, unittest.TestCase):
     def testAuthTokenEmpty(self):
         auth_token = AuthToken()
 
+        self.assertEquals(None, auth_token.account_name)
         self.assertEquals(None, auth_token.token)
         self.assertEquals(None, auth_token.session_id)
 
 
     def testAuthTokenNotEmpty(self):
         auth_token = AuthToken()
+        auth_token.account_name = 'account'
         auth_token.token = 'token'
         auth_token.session_id = 'sessionid'
 
+        self.assertFalse(util.empty(auth_token.account_name))
         self.assertFalse(util.empty(auth_token.token))
         self.assertFalse(util.empty(auth_token.session_id))
 
@@ -64,6 +67,7 @@ class AuthTest(BaseTest, unittest.TestCase):
         auth_token = a.authenticate(transport, self.account_name, self.password)
 
         self.assertTrue(auth_token != None)
+        self.assertEquals(self.account_name, auth_token.account_name)
         self.assertEquals(self.token, auth_token.token)
         self.assertEquals(self.session_id, auth_token.session_id)
 

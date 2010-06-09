@@ -6,7 +6,7 @@ from base import BaseTest
 from lxml import etree
 from mock.auth import MockAuthenticator
 from mock.soap import MockTransport
-from pyzimbra import zconstant
+from pyzimbra import zconstant, sconstant
 from pyzimbra.auth import AuthException
 from pyzimbra.base import ZimbraClientException
 from pyzimbra.zclient import ZimbraClient
@@ -68,14 +68,21 @@ class ZimbraClientTest(BaseTest, unittest.TestCase):
         self.assertRaises(ZimbraClientException, zclient.invoke, None)
 
 
-    def _testZimbraClientRequest(self):
+    def testZimbraClientRequest(self):
 
         zclient = ZimbraClient()
-        zclient.hostname = self.hostname
-        zclient.authenticate(self.account_name, self.password)
+        zclient.transport = MockTransport()
+        zclient.authenticate(MockAuthenticator(),
+                             self.account_name, self.password)
 
-        req = etree.Element('test', nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
+        req = etree.Element(sconstant.GetInfoRequest,
+                            attrib={sconstant.A_SECTIONS: sconstant.V_MBOX},
+                            nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
         res = zclient.invoke(req)
+
+        account_name = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
+                                              sconstant.E_NAME))
+        self.assertEqual(self.account_name, account_name)
 
 
     def _testZimbraClientRequestAlternativeToken(self):

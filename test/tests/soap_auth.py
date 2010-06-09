@@ -3,9 +3,9 @@
 @author: ilgar
 """
 from base import BaseTest
-from mock.soap import MockTransport, MockFailingTransport
+from mock.soap import MockFailingTransport, MockTransport
 from pyzimbra.auth import AuthException
-from pyzimbra.soap import SoapAuthenticator
+from pyzimbra.soap_auth import SoapAuthenticator
 import unittest
 
 

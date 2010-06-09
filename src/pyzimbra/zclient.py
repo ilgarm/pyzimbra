@@ -40,20 +40,22 @@ class ZimbraClient(object):
                                                       account_name, password)
 
 
-    def invoke(self, req, token=None):
+    def invoke(self, req, auth_token=None):
         """
         Invokes zimbra method using established authentication session.
         @param req: zimbra request
-        @param token: alternative authentication session, if not provided existing one will be used 
+        @param auth_token: alternative authentication session,
+          if not provided existing one will be used 
         @return: zimbra response
         @raise AuthException: if authentication fails
         @raise SoapException: if soap communication fails
         @raise ZimbraClientException: wrapped server exception
         """
-        if self.auth_token == None:
+        if self.auth_token == None and auth_token == None:
             raise AuthException('Unable to invoke zimbra method')
 
         if req == None:
             raise ZimbraClientException('Invalid request')
 
-        return self.transport.invoke(req)
+        token = auth_token if auth_token != None else self._auth_token
+        return self.transport.invoke(req, token)

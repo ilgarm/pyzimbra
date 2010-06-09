@@ -31,6 +31,7 @@ class MockAuthenticator(Authenticator):
             raise AuthException('Invalid username')
 
         token = AuthToken()
+        token.account_name = self.account_name
         token.token = self.token
         token.session_id = self.session_id
 

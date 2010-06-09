@@ -39,8 +39,7 @@ class ZimbraClientTransport(object):
     # --------------------------------------------------------------- properties
     url = property(lambda self: self._url,
                    lambda self, v: setattr(self, '_url', v))
-    token = property(lambda self: self._token,
-                     lambda self, v: setattr(self, '_token', v))
+
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
@@ -49,9 +48,10 @@ class ZimbraClientTransport(object):
 
     # ------------------------------------------------------------------ unbound
     @abc.abstractmethod
-    def invoke(self, req):
+    def invoke(self, req, auth_token):
         """
         Invokes zimbra request.
         @param req: request to invoke
+        @param auth_token: authentication token to use for session
         @return: zimbra response
         """

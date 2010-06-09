@@ -4,26 +4,10 @@ Authentication samples.
 
 @author: ilgar
 """
-from ConfigParser import ConfigParser
-from pyzimbra.soap import SoapAuthenticator, SoapTransport
 from pyzimbra import soap
-
-
-def load_properties():
-    properties = "client-local.properties"
-    cfg = ConfigParser()
-    cfg.read(properties)
-
-    p = {}
-    p['domain'] = cfg.get("domain", "name")
-    p['hostname'] = cfg.get("domain", "host")
-    p['domain_key'] = cfg.get("domain", "key")
-
-    p['username'] = cfg.get("auth", "username")
-    p['account_name'] = '%s@%s' % (p['username'], p['domain'])
-    p['password'] = cfg.get("auth", "password")
-
-    return p
+from pyzimbra.soap_auth import SoapAuthenticator
+from pyzimbra.soap_transport import SoapTransport
+from sample.util import load_properties
 
 
 def authenticate():

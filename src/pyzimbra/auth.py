@@ -37,6 +37,8 @@ class AuthToken(object):
     AuthToken holds current authentication token and sessions id.
     """
     # --------------------------------------------------------------- properties
+    account_name = property(lambda self: self._account_name,
+                            lambda self, v: setattr(self, '_account_name', v))
     token = property(lambda self: self._token,
                      lambda self, v: setattr(self, '_token', v))
     session_id = property(lambda self: self._session_id,
@@ -45,6 +47,7 @@ class AuthToken(object):
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
+        self.account_name = None
         self.token = None
         self.session_id = None
 
