@@ -7,8 +7,6 @@ Soap related methods and classes.
 from lxml import etree
 from pyzimbra import zconstant, sconstant
 from pyzimbra.auth import AuthException, AuthToken, Authenticator
-import sys
-import traceback
 import urllib2
 
 
@@ -42,8 +40,10 @@ class SoapAuthenticator(Authenticator):
         res = None
         try:
             res = transport.invoke(req, None)
-        except urllib2.HTTPError:
-            raise AuthException('Authentication failed')
+        except urllib2.HTTPError as exc:
+            e = AuthException('Authentication failed')
+            e.__cause__ = exc
+            raise e
 
         auth_token = AuthToken()
         auth_token.account_name = account_name

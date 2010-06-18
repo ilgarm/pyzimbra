@@ -9,27 +9,10 @@ from pyzimbra.base import ZimbraClientTransport, ZimbraClientException
 import abc
 
 
-class AuthException(Exception):
+class AuthException(ZimbraClientException):
     """
     Authentication exception.
     """
-    # --------------------------------------------------------------- properties
-    title = property(lambda self: self._title, 
-                     lambda self, v: setattr(self, '_title', v))
-    message = property(lambda self: self._message, 
-                       lambda self, v: setattr(self, '_message', v))
-
-    # -------------------------------------------------------------------- bound
-    def __init__(self, message, title = None, show_traceback = False):
-        Exception.__init__(self, message)
-
-        self._message = message
-        if title:
-            self._title = title
-        self.show_traceback = show_traceback
-
-    def __unicode__(self):
-        return unicode(self.message)
 
 
 class AuthToken(object):
