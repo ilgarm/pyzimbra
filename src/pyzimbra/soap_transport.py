@@ -5,7 +5,7 @@ Soap related methods and classes.
 @author: ilgar
 """
 from lxml import etree
-from pyzimbra import zconstant, sconstant
+from pyzimbra import zconstant, sconstant, util
 from pyzimbra.base import ZimbraClientTransport
 from pyzimbra.soap import SoapException
 import gzip
@@ -32,10 +32,12 @@ class SoapTransport(ZimbraClientTransport):
         env = self.wrap_soap_payload(req, auth_token)
         encoded = etree.tounicode(env)
 
-        headers = { 'User-Agent': zconstant.USER_AGENT,
-                   'Accept-encoding': 'gzip' }
+        headers = {'User-Agent': zconstant.USER_AGENT,
+                   'Accept-encoding': 'gzip'}
         request = urllib2.Request(self.url, encoded, headers)
-        response = urllib2.urlopen(request)
+
+        opener = self.build_opener()
+        response = opener.open(request)
         data = response.read()
 
         if hasattr(response, 'headers'):
@@ -43,6 +45,19 @@ class SoapTransport(ZimbraClientTransport):
                 data = gzip.GzipFile(fileobj=io.StringIO(data)).read()
 
         return self.unwrap_soap_payload(data)
+
+
+    def build_opener(self):
+        """
+        Builds url opener, initializing proxy with auth if required.
+        @return: OpenerDirector
+        """
+        if util.empty(self.proxy_url):
+            return urllib2.build_opener()
+
+        proxy_handler = urllib2.ProxyHandler({self.proxy_url[:4]: self.proxy_url})
+
+        return urllib2.build_opener(proxy_handler)
 
 
     def wrap_soap_payload(self, payload, auth_token = None):

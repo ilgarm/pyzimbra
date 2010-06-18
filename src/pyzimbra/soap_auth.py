@@ -7,6 +7,8 @@ Soap related methods and classes.
 from lxml import etree
 from pyzimbra import zconstant, sconstant
 from pyzimbra.auth import AuthException, AuthToken, Authenticator
+import sys
+import traceback
 import urllib2
 
 

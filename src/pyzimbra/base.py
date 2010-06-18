@@ -39,12 +39,13 @@ class ZimbraClientTransport(object):
     # --------------------------------------------------------------- properties
     url = property(lambda self: self._url,
                    lambda self, v: setattr(self, '_url', v))
-
+    proxy_url = property(lambda self: self._proxy_url,
+                         lambda self, v: setattr(self, '_proxy_url', v))
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
         self.url = None
-        self.token = None
+        self.proxy_url = None
 
     # ------------------------------------------------------------------ unbound
     @abc.abstractmethod
