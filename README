@@ -1,0 +1,16 @@
+= Zimbra Python Client =
+
+Report a bug at the moment by sending an email specified at the bottom of the page. Later, issue tracking tool will be made available.
+
+Documentation available online at: http://trac.lab.az/pyzimbra/wiki
+
+=== Release notes ===
+
+version 0.1 - current
+
+ticket:2 - zimbra client authentication
+ticket:8 - zimbra soap wrapper
+ticket:22 - rewrite all xml manipulations to use single library, minidom or lxml.etree
+ticket:31 - add proxy support
+ticket:27 - error and exception handling
+
