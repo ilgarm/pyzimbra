@@ -13,6 +13,9 @@ class AuthException(ZimbraClientException):
     """
     Authentication exception.
     """
+    # -------------------------------------------------------------------- bound
+    def __init__(self, message, cause = None):
+        ZimbraClientException.__init__(self, message, cause)
 
 
 class AuthToken(object):

@@ -5,6 +5,7 @@ Zimbra client related methods and classes.
 @author: ilgar
 """
 import abc
+import traceback
 
 
 class ZimbraClientException(Exception):
@@ -12,22 +13,42 @@ class ZimbraClientException(Exception):
     Zimbra client exception.
     """
     # --------------------------------------------------------------- properties
-    title = property(lambda self: self._title, 
-                     lambda self, v: setattr(self, '_title', v))
     message = property(lambda self: self._message, 
                        lambda self, v: setattr(self, '_message', v))
+    tracebacks = property(lambda self: self._tracebacks,
+                          lambda self, v: setattr(self, '_tracebacks', v))
 
     # -------------------------------------------------------------------- bound
-    def __init__(self, message, title = None, show_traceback = False):
+    def __init__(self, message, cause = None):
         Exception.__init__(self, message)
 
         self._message = message
-        if title:
-            self._title = title
-        self.show_traceback = show_traceback
+
+        self.tracebacks = []
+        if cause != None:
+            if isinstance(cause, ZimbraClientException):
+                self.tracebacks = cause.tracebacks
+        list = traceback.format_exc().split('\n')[1:]
+        self.tracebacks.insert(0, '\n'.join(list))
+
+
+    def __str(self):
+        return self.message
+
 
     def __unicode__(self):
         return unicode(self.message)
+
+
+    # ------------------------------------------------------------------ unbound
+    def print_trace(self):
+        """
+        Prints stack trace for current exceptions chain.
+        """
+        traceback.print_exc()
+        for tb in self.tracebacks:
+            print tb,
+        print ''
 
 
 class ZimbraClientTransport(object):

@@ -41,7 +41,7 @@ class SoapAuthenticator(Authenticator):
         try:
             res = transport.invoke(req, None)
         except urllib2.HTTPError as exc:
-            e = AuthException('Authentication failed')
+            e = AuthException('Authentication failed', exc)
             e.__cause__ = exc
             raise e
 

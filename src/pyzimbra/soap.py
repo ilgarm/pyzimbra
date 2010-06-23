@@ -47,3 +47,6 @@ class SoapException(ZimbraClientException):
     """
     Soap exception.
     """
+    # -------------------------------------------------------------------- bound
+    def __init__(self, message, cause = None):
+        ZimbraClientException.__init__(self, message, cause)
