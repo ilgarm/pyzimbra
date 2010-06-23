@@ -23,6 +23,7 @@ class ZimbraClientException(Exception):
         Exception.__init__(self, message)
 
         self._message = message
+        self.__cause__ = cause
 
         self.tracebacks = []
         if cause != None:
@@ -32,12 +33,8 @@ class ZimbraClientException(Exception):
         self.tracebacks.insert(0, '\n'.join(list))
 
 
-    def __str(self):
-        return self.message
-
-
     def __unicode__(self):
-        return unicode(self.message)
+        return self.message
 
 
     # ------------------------------------------------------------------ unbound

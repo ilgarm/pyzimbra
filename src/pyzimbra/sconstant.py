@@ -6,6 +6,10 @@
 ENVELOPE = 'Envelope'
 HEADER = 'Header'
 BODY = 'Body'
+FAULT = 'Fault'
+REASON = 'Reason'
+TEXT = 'Text'
+DETAIL = 'Detail'
 
 CONTEXT = 'context'
 
@@ -13,6 +17,9 @@ AuthRequest = 'AuthRequest'
 AuthResponse = 'AuthResponse'
 GetInfoRequest = 'GetInfoRequest'
 GetInfoResponse = 'GetInfoResponse'
+
+E_CODE = 'Code'
+E_TRACE = 'Trace'
 
 E_AUTH_TOKEN = 'authToken'
 E_SESSION_ID = 'sessionId'

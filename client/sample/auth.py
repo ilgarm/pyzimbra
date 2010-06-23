@@ -8,6 +8,7 @@ from pyzimbra import soap
 from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
 from sample.util import load_properties
+from pyzimbra.base import ZimbraClientException
 
 
 def authenticate():
@@ -24,4 +25,7 @@ def authenticate():
 
 
 if __name__ == '__main__':
-    authenticate()
+    try:
+        authenticate()
+    except ZimbraClientException, e:
+        e.print_trace()

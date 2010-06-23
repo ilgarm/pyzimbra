@@ -4,11 +4,11 @@ Soap related mockups.
 
 @author: ilgar
 """
-from pyzimbra.base import ZimbraClientTransport
-import urllib2
 from mock import responses
-from util import load_test_properties
 from pyzimbra.auth import AuthToken
+from pyzimbra.base import ZimbraClientTransport
+from pyzimbra.soap import SoapException
+from util import load_test_properties
 
 
 class MockTransport(ZimbraClientTransport):
@@ -51,4 +51,4 @@ class MockFailingTransport(ZimbraClientTransport):
 
     # ------------------------------------------------------------------ unbound
     def invoke(self, req, auth_token):
-        raise urllib2.HTTPError('', '500', 'Mocked Error', None, None)
+        raise SoapException('Mocked Error')

@@ -8,6 +8,7 @@ from pyzimbra import zconstant, sconstant
 from pyzimbra.soap_transport import SoapTransport
 import unittest
 from pyzimbra.auth import AuthToken
+import urllib2
 
 
 class SoapTransportTest(BaseTest, unittest.TestCase):
@@ -98,6 +99,52 @@ class SoapTransportTest(BaseTest, unittest.TestCase):
         self.assertEqual('{urn:zimbraAccount}test', result.tag)
 
 
+    def testInitSoapException(self):
+        
+        transport = SoapTransport()
+
+        result = transport.init_soap_exception(ValueError())
+        self.assertEqual(None, result.code)
+        self.assertEqual(None, result.trace)
+
+
+    def testUnwrapSoapException(self):
+        transport = SoapTransport()
+
+        str = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">"\
+            "<soap:Header>"\
+            "<context xmlns=\"urn:zimbra\"/>"\
+            "</soap:Header>"\
+            "<soap:Body>"\
+            "<soap:Fault>"\
+            "<soap:Code>"\
+            "<soap:Value>soap:Sender</soap:Value>"\
+            "</soap:Code>"\
+            "<soap:Reason>"\
+            "<soap:Text>MESSAGE</soap:Text>"\
+            "</soap:Reason>"\
+            "<soap:Detail>"\
+            "<Error xmlns=\"urn:zimbra\">"\
+            "<Code>CODE</Code>"\
+            "<Trace>TRACE</Trace>"\
+            "</Error>"\
+            "</soap:Detail>"\
+            "</soap:Fault>"\
+            "</soap:Body>"\
+            "</soap:Envelope>"
+
+        def read():
+            return str
+
+        exc = urllib2.HTTPError('url', '500', 'message', None, None)
+        exc.read = read
+
+        result = transport.init_soap_exception(exc)
+        self.assertEqual('MESSAGE', result.message)
+        self.assertEqual('CODE', result.code)
+        self.assertEqual('TRACE', result.trace)
+
+
     def testEtreeResponseParse(self):
 
         res = etree.Element('%s%s' % (zconstant.NS_ZIMBRA_ACC,
@@ -126,5 +173,5 @@ class SoapTransportTest(BaseTest, unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
+#    import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
