@@ -81,18 +81,23 @@ class ZimbraClientTransport(object):
                    lambda self, v: setattr(self, '_url', v))
     proxy_url = property(lambda self: self._proxy_url,
                          lambda self, v: setattr(self, '_proxy_url', v))
+    debug = property(lambda self: self._debug,
+                   lambda self, v: setattr(self, '_debug', v))
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
         self.url = None
         self.proxy_url = None
+        self.debug = 0
 
     # ------------------------------------------------------------------ unbound
     @abc.abstractmethod
-    def invoke(self, req, auth_token):
+    def invoke(self, ns, request_name, params, auth_token):
         """
         Invokes zimbra request.
-        @param req: request to invoke
+        @param ns: namespace of the request method
+        @param request_name: name of the request method
+        @param params: parameters to pass to method call
         @param auth_token: authentication token to use for session
         @return: zimbra response
         """

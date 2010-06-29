@@ -26,7 +26,6 @@ Soap related methods and classes.
 
 @author: ilgar
 """
-from lxml import etree
 from pyzimbra import zconstant, sconstant
 from pyzimbra.auth import AuthException, AuthToken, Authenticator
 from pyzimbra.soap import SoapException
@@ -49,27 +48,19 @@ class SoapAuthenticator(Authenticator):
         """
         Authenticator.authenticate(self, transport, account_name, password)
 
-        req = etree.Element(sconstant.AuthRequest,
-                            nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-
-        account = etree.SubElement(req, sconstant.E_ACCOUNT,
-                                   attrib={sconstant.A_BY: sconstant.V_NAME})
-        account.text = account_name
-
-        passwd = etree.SubElement(req, sconstant.E_PASSWORD)
-        passwd.text = password
-
-        res = None
+        params = {sconstant.E_ACCOUNT: account_name,
+                  sconstant.E_PASSWORD: password}
         try:
-            res = transport.invoke(req, None)
+            res = transport.invoke(zconstant.NS_ZIMBRA_ACC_URL,
+                                   sconstant.AuthRequest,
+                                   params,
+                                   None)
         except SoapException as exc:
             raise AuthException(unicode(exc), exc)
 
         auth_token = AuthToken()
         auth_token.account_name = account_name
-        auth_token.token = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                                  sconstant.E_AUTH_TOKEN))
-        auth_token.session_id = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                                       sconstant.E_SESSION_ID))
+        auth_token.token = res.authToken
+        auth_token.session_id = res.sessionId
 
         return auth_token

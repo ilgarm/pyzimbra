@@ -28,6 +28,7 @@ Zimbra client related methods and classes.
 """
 from pyzimbra.auth import AuthException
 from pyzimbra.base import ZimbraClientException
+from pyzimbra import util
 
 
 class ZimbraClient(object):
@@ -62,7 +63,7 @@ class ZimbraClient(object):
                                                       account_name, password)
 
 
-    def invoke(self, req, auth_token=None):
+    def invoke(self, ns, request_name, params, auth_token=None):
         """
         Invokes zimbra method using established authentication session.
         @param req: zimbra request
@@ -76,8 +77,8 @@ class ZimbraClient(object):
         if self.auth_token == None and auth_token == None:
             raise AuthException('Unable to invoke zimbra method')
 
-        if req == None:
+        if util.empty(request_name):
             raise ZimbraClientException('Invalid request')
 
         token = auth_token if auth_token != None else self._auth_token
-        return self.transport.invoke(req, token)
+        return self.transport.invoke(ns, request_name, params, token)

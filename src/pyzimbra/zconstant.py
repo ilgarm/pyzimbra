@@ -25,10 +25,10 @@
 @author: ilgar
 """
 
+__version__ = '0.1'
+USER_AGENT = "pyzimbra/%s" % __version__
 
 SOAP_URL = '/service/soap'
-
-USER_AGENT = 'ZimbraPython/1.0 +http://localhost/'
 
 NS_SOAP_URL = 'http://www.w3.org/2003/05/soap-envelope'
 NS_SOAP_PREFIX = 'soap'

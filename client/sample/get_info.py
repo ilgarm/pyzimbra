@@ -26,7 +26,6 @@ Account info samples.
 
 @author: ilgar
 """
-from lxml import etree
 from pyzimbra import soap, sconstant, zconstant
 from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
@@ -37,26 +36,24 @@ from sample.util import load_properties
 def get_info():
     p = load_properties()
 
+    transport = SoapTransport()
+    transport.debug = 1
+    transport.url = soap.soap_url(p['hostname'])
+
     auth = SoapAuthenticator()
 
-    transport = SoapTransport()
-    transport.url = soap.soap_url(p['hostname'])
-    
     zclient = ZimbraClient()
     zclient.transport = transport
 
     zclient.authenticate(auth, p['account_name'], p['password'])
 
-    req = etree.Element(sconstant.GetInfoRequest,
-                        attrib={sconstant.A_SECTIONS: sconstant.V_MBOX},
-                        nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-    res = zclient.invoke(req)
+    params = {sconstant.A_SECTIONS: sconstant.V_MBOX}
+    res = zclient.invoke(zconstant.NS_ZIMBRA_ACC_URL,
+                         sconstant.GetInfoRequest,
+                         params)
 
-    account_name = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                          sconstant.E_NAME))
-
-    print account_name
-    print etree.tostring(res)
+    print res
+    print res.name
 
 
 if __name__ == '__main__':
