@@ -4,4 +4,3 @@
 *.pyc
 .DS_Store
 client-local.properties
-test.py
