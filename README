@@ -1,7 +1,6 @@
 = Zimbra Python Client =
 
-Report a bug at the moment by sending an email specified at the bottom of the page. Later, issue tracking tool will be made available.
-
+Report a bug at: http://github.com/ilgarm/pyzimbra/issues
 Documentation available online at: http://trac.lab.az/pyzimbra/wiki
 
 === Release notes ===
@@ -13,4 +12,4 @@ ticket:8 - zimbra soap wrapper
 ticket:22 - rewrite all xml manipulations to use single library, minidom or lxml.etree
 ticket:31 - add proxy support
 ticket:27 - error and exception handling
-
+ticket:33 - switch to SOAPpy
