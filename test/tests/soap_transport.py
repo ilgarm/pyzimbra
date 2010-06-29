@@ -25,15 +25,13 @@
 @author: ilgar
 """
 from base import BaseTest
-from lxml import etree
-from pyzimbra import zconstant, sconstant
-from pyzimbra.soap_transport import SoapTransport
+from mock.soap import MockTransport
+from pyzimbra.soap_transport import SoapHttpTransport
 import unittest
-from pyzimbra.auth import AuthToken
 import urllib2
 
 
-class SoapTransportTest(BaseTest, unittest.TestCase):
+class SoapHttpTransportTest(BaseTest, unittest.TestCase):
 
     # ------------------------------------------------------------------ unbound
     def setUp(self):
@@ -45,85 +43,9 @@ class SoapTransportTest(BaseTest, unittest.TestCase):
 
 
     # -------------------------------------------------------------------- tests
-    def testWrapSimplePayload(self):
-
-        req = etree.Element('test', nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-
-        transport = SoapTransport()
-
-        env = transport.wrap_soap_payload(req)
-        result = etree.tounicode(env)
-        expected = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">"\
-            "<soap:Header>"\
-            "<context xmlns=\"urn:zimbra\"/>"\
-            "</soap:Header>"\
-            "<soap:Body>"\
-            "<test xmlns=\"urn:zimbraAccount\"/>"\
-            "</soap:Body>"\
-            "</soap:Envelope>"
-        self.assertEqual(expected, result)
-
-
-    def testUnwrapSimplePayload(self):
-
-        str = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">"\
-            "<soap:Header/>"\
-            "<soap:Body>"\
-            "<test xmlns=\"urn:zimbraAccount\"/>"\
-            "</soap:Body>"\
-            "</soap:Envelope>"
-
-        transport = SoapTransport()
-
-        result = transport.unwrap_soap_payload(str)
-        self.assertEqual('{urn:zimbraAccount}test', result.tag)
-
-
-    def testWrapTokenizedPayload(self):
-
-        req = etree.Element('test', nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-
-        auth_token = AuthToken()
-        auth_token.account_name = self.account_name
-        auth_token.token = self.token
-        auth_token.session_id = self.session_id
-
-        transport = SoapTransport()
-
-        env = transport.wrap_soap_payload(req, auth_token)
-        result = etree.tounicode(env)
-        expected = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">"\
-            "<soap:Header>"\
-            "<context xmlns=\"urn:zimbra\">"\
-            "<authToken>%s</authToken>"\
-            "<sessionId id=\"%s\">%s</sessionId>"\
-            "</context>"\
-            "</soap:Header>"\
-            "<soap:Body>"\
-            "<test xmlns=\"urn:zimbraAccount\"/>"\
-            "</soap:Body>"\
-            "</soap:Envelope>" % (self.token, self.session_id, self.session_id)
-        self.assertEqual(expected, result)
-
-
-    def testUnwrapTokenizedPayload(self):
-
-        str = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">"\
-            "<soap:Header/>"\
-            "<soap:Body>"\
-            "<test xmlns=\"urn:zimbraAccount\"/>"\
-            "</soap:Body>"\
-            "</soap:Envelope>"
-
-        transport = SoapTransport()
-
-        result = transport.unwrap_soap_payload(str)
-        self.assertEqual('{urn:zimbraAccount}test', result.tag)
-
-
     def testInitSoapException(self):
         
-        transport = SoapTransport()
+        transport = SoapHttpTransport()
 
         result = transport.init_soap_exception(ValueError())
         self.assertEqual(None, result.code)
@@ -131,30 +53,27 @@ class SoapTransportTest(BaseTest, unittest.TestCase):
 
 
     def testUnwrapSoapException(self):
-        transport = SoapTransport()
+        transport = SoapHttpTransport()
+        transport.transport = MockTransport()
 
-        str = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">"\
-            "<soap:Header>"\
-            "<context xmlns=\"urn:zimbra\"/>"\
-            "</soap:Header>"\
-            "<soap:Body>"\
-            "<soap:Fault>"\
-            "<soap:Code>"\
-            "<soap:Value>soap:Sender</soap:Value>"\
-            "</soap:Code>"\
-            "<soap:Reason>"\
-            "<soap:Text>MESSAGE</soap:Text>"\
-            "</soap:Reason>"\
-            "<soap:Detail>"\
-            "<Error xmlns=\"urn:zimbra\">"\
-            "<Code>CODE</Code>"\
-            "<Trace>TRACE</Trace>"\
-            "</Error>"\
-            "</soap:Detail>"\
-            "</soap:Fault>"\
-            "</soap:Body>"\
-            "</soap:Envelope>"
-
+        str = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Header>
+        <context xmlns="urn:zimbra"/>
+        </soap:Header>
+        <soap:Body>
+        <soap:Fault>
+        <soap:faultcode>soap:CODE</soap:faultcode>
+        <soap:faultstring>MESSAGE</soap:faultstring>
+        <soap:detail>
+        <Error xmlns="urn:zimbra">
+        <Code>CODE</Code>
+        <Trace>TRACE</Trace>
+        </Error>
+        </soap:detail>
+        </soap:Fault>
+        </soap:Body>
+        </soap:Envelope>
+        """
         def read():
             return str
 
@@ -162,36 +81,9 @@ class SoapTransportTest(BaseTest, unittest.TestCase):
         exc.read = read
 
         result = transport.init_soap_exception(exc)
-        self.assertEqual('MESSAGE', result.message)
+        self.assertEqual('soap:CODE:MESSAGE', result.message)
         self.assertEqual('CODE', result.code)
         self.assertEqual('TRACE', result.trace)
-
-
-    def testEtreeResponseParse(self):
-
-        res = etree.Element('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                      sconstant.AuthResponse),
-                            nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-
-        e = etree.SubElement(res, '%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                            sconstant.E_AUTH_TOKEN))
-        e.text = 'token_abcdef'
-
-        e = etree.SubElement(res, '%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                            sconstant.E_SESSION_ID),
-                             attrib={sconstant.A_ID: '12345'})
-        e.text = '12345'
-
-        self.assertEqual('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                   sconstant.AuthResponse), res.tag)
-
-        result = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                        sconstant.E_AUTH_TOKEN))
-        self.assertEqual('token_abcdef', result)
-
-        result = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                        sconstant.E_SESSION_ID))
-        self.assertEqual('12345', result)
 
 
 if __name__ == "__main__":

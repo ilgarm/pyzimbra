@@ -26,46 +26,92 @@ Zimbra request and response mocked values.
 
 @author: ilgar
 """
-from lxml import etree
-from pyzimbra import sconstant, zconstant
+from pyzimbra import sconstant
+from pyzimbra.soap_soappy import parseSOAP
+import SOAPpy
 
 
-def get_response(req, auth_token):
 
-    if req.tag == sconstant.AuthRequest:
-        return AuthResponse(req, auth_token)
+CHANGE_TOKEN = 12704
+LIFETIME = 86400000
 
-    if req.tag == sconstant.GetInfoRequest:
-        return GetInfoResponse(req, auth_token)
+def init_soap_parser(f):
+    def call(params, auth_token):
+        _parseSOAP = SOAPpy.Parser._parseSOAP
+        SOAPpy.Parser._parseSOAP = parseSOAP
+        try:
+            return f(params, auth_token)
+        finally:
+            SOAPpy.Parser._parseSOAP = _parseSOAP
+    return call
+
+
+def get_response(request_name, params, auth_token):
+
+    if request_name == sconstant.AuthRequest:
+        return AuthResponse(params, auth_token)
+
+    if request_name == sconstant.GetInfoRequest:
+        return GetInfoResponse(params, auth_token)
 
     return None
 
 
-def AuthResponse(req, auth_token):
+@init_soap_parser
+def AuthResponse(params, auth_token):
 
-    res = etree.Element('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                  sconstant.AuthResponse),
-                        nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
+    str = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Header>
+    <context xmlns="urn:zimbra">
+    <sessionId id="%(session_id)s">%(session_id)s</sessionId>
+    <refresh>
+    <version>%(version)s</version>
+    </refresh>
+    <change token="%(change_token)s"/>
+    </context>
+    </soap:Header>
+    <soap:Body>
+    <AuthResponse xmlns="urn:zimbraAccount">
+    <authToken>%(token)s</authToken>
+    <lifetime>%(lifetime)s</lifetime>
+    <sessionId id="%(session_id)s">%(session_id)s</sessionId>
+    </AuthResponse>
+    </soap:Body>
+    </soap:Envelope>
+    """
+    str = str % {'version': '5.0 VGDU1296_local 20091028-1850',
+                 'change_token': CHANGE_TOKEN,
+                 'lifetime': LIFETIME,
+                 'token': auth_token.token,
+                 'session_id': auth_token.session_id}
 
-    e = etree.SubElement(res, '%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                        sconstant.E_AUTH_TOKEN))
-    e.text = auth_token.token
-
-    e = etree.SubElement(res, '%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                        sconstant.E_SESSION_ID),
-                         attrib={sconstant.A_ID: auth_token.session_id})
-    e.text = auth_token.session_id
-
-    return res
+    return SOAPpy.Parser.parseSOAP(str).AuthResponse
 
 
-def GetInfoResponse(req, auth_token):
-    res = etree.Element('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                  sconstant.GetInfoResponse),
-                        nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
+@init_soap_parser
+def GetInfoResponse(params, auth_token):
+    
+    str = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Header>
+    <context xmlns="urn:zimbra">
+    <sessionId id="%(session_id)s">%(session_id)s</sessionId>
+    <change token="%(change_token)s"/>
+    </context>
+    </soap:Header>
+    <soap:Body>
+    <GetInfoResponse xmlns="urn:zimbraAccount">
+    <version>%(version)s</version>
+    <name>%(account_name)s</name>
+    <lifetime>%(lifetime)s</lifetime>
+    </GetInfoResponse>
+    </soap:Body>
+    </soap:Envelope>
+    """
+    str = str % {'version': '5.0 VGDU1296_local 20091028-1850',
+                 'change_token': CHANGE_TOKEN,
+                 'lifetime': LIFETIME,
+                 'token': auth_token.token,
+                 'session_id': auth_token.session_id,
+                 'account_name': auth_token.account_name}
 
-    e = etree.SubElement(res, '%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                        sconstant.E_NAME))
-    e.text = auth_token.account_name
-
-    return res
+    return SOAPpy.Parser.parseSOAP(str).GetInfoResponse

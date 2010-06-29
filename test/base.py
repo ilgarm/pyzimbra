@@ -41,6 +41,8 @@ class BaseTest(object):
                         lambda self, v: setattr(self, '_username', v))
     account_name = property(lambda self: self._account_name,
                             lambda self, v: setattr(self, '_account_name', v))
+    account_id = property(lambda self: self._account_id,
+                            lambda self, v: setattr(self, '_account_id', v))
     password = property(lambda self: self._password,
                         lambda self, v: setattr(self, '_password', v))
     token = property(lambda self: self._token,

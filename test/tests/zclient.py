@@ -25,7 +25,6 @@
 @author: ilgar
 """
 from base import BaseTest
-from lxml import etree
 from mock.auth import MockAuthenticator
 from mock.soap import MockTransport
 from pyzimbra import zconstant, sconstant
@@ -59,7 +58,7 @@ class ZimbraClientTest(BaseTest, unittest.TestCase):
 
         zclient = ZimbraClient()
 
-        self.assertRaises(AuthException, zclient.invoke, None)
+        self.assertRaises(AuthException, zclient.invoke, '', '', {}, None)
 
 
     def testZimbraClientAuth(self):
@@ -87,7 +86,7 @@ class ZimbraClientTest(BaseTest, unittest.TestCase):
         zclient.authenticate(MockAuthenticator(),
                              self.account_name, self.password)
 
-        self.assertRaises(ZimbraClientException, zclient.invoke, None)
+        self.assertRaises(ZimbraClientException, zclient.invoke, '', '', {}, None)
 
 
     def testZimbraClientRequest(self):
@@ -97,24 +96,12 @@ class ZimbraClientTest(BaseTest, unittest.TestCase):
         zclient.authenticate(MockAuthenticator(),
                              self.account_name, self.password)
 
-        req = etree.Element(sconstant.GetInfoRequest,
-                            attrib={sconstant.A_SECTIONS: sconstant.V_MBOX},
-                            nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-        res = zclient.invoke(req)
+        params = {}
+        res = zclient.invoke(zconstant.NS_ZIMBRA_ACC_URL,
+                             sconstant.GetInfoRequest,
+                             params)
 
-        account_name = res.findtext('%s%s' % (zconstant.NS_ZIMBRA_ACC,
-                                              sconstant.E_NAME))
-        self.assertEqual(self.account_name, account_name)
-
-
-    def _testZimbraClientRequestAlternativeToken(self):
-
-        zclient = ZimbraClient()
-        zclient.hostname = self.hostname
-        zclient.authenticate(self.account_name, self.password)
-
-        req = etree.Element('test', nsmap=zconstant.NS_ZIMBRA_ACC_MAP)
-        zclient.invoke(req, self.alt_auth_token)
+        self.assertEqual(self.account_name, res.name)
 
 
 if __name__ == "__main__":

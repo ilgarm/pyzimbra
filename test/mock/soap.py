@@ -47,15 +47,15 @@ class MockTransport(ZimbraClientTransport):
 
 
     # ------------------------------------------------------------------ unbound
-    def invoke(self, req, auth_token):
-        
+    def invoke(self, ns, request_name, params, auth_token):
+
         if auth_token == None:
             auth_token = AuthToken()
             auth_token.account_name = self.account_name
             auth_token.token = self.token
             auth_token.session_id = self.session_id
 
-        return responses.get_response(req, auth_token)
+        return responses.get_response(request_name, params, auth_token)
 
 
 class MockFailingTransport(ZimbraClientTransport):
@@ -72,5 +72,5 @@ class MockFailingTransport(ZimbraClientTransport):
 
 
     # ------------------------------------------------------------------ unbound
-    def invoke(self, req, auth_token):
+    def invoke(self, ns, request_name, params, auth_token):
         raise SoapException('Mocked Error')

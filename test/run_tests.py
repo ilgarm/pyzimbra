@@ -29,7 +29,7 @@ Test related methods and classes.
 from tests.auth import AuthTest
 from tests.soap import SoapTest
 from tests.soap_auth import SoapAuthTest
-from tests.soap_transport import SoapTransportTest
+from tests.soap_transport import SoapHttpTransportTest
 from tests.util import UtilTest
 from tests.zclient import ZimbraClientTest
 import unittest

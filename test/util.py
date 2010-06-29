@@ -40,6 +40,7 @@ def load_test_properties(test):
 
     test.username = cfg.get("auth", "username")
     test.account_name = '%s@%s' % (test.username, test.domain)
+    test.account_id = cfg.get("auth", "id")
     test.password = cfg.get("auth", "password")
     test.token = cfg.get("auth", "token")
     test.session_id = cfg.get("auth", "session_id")
