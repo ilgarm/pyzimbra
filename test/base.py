@@ -36,7 +36,7 @@ class BaseTest(object):
                         lambda self, v: setattr(self, '_hostname', v))
     domain_key = property(lambda self: self._domain_key,
                           lambda self, v: setattr(self, '_domain_key', v))
-    
+
     username = property(lambda self: self._username,
                         lambda self, v: setattr(self, '_username', v))
     account_name = property(lambda self: self._account_name,

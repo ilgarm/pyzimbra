@@ -50,10 +50,22 @@ class UtilTest(BaseTest, unittest.TestCase):
         result = util.empty("")
         self.assertTrue(result)
 
-
-    def testNotEmptyString(self):
         result = util.empty("some string")
         self.assertFalse(result)
+
+
+    def testGetDomain(self):
+        result = util.get_domain('noemail')
+        self.assertEquals(None, result)
+
+        result = util.get_domain('local@')
+        self.assertEquals(None, result)
+
+        result = util.get_domain('@domain')
+        self.assertEquals('domain', result)
+
+        result = util.get_domain('local@domain')
+        self.assertEquals('domain', result)
 
 
 if __name__ == "__main__":

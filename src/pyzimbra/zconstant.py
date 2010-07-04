@@ -30,6 +30,8 @@ USER_AGENT = "pyzimbra/%s" % __version__
 
 SOAP_URL = '/service/soap'
 
+SOAP_DEFAULT_PREFIX = 'ns1'
+
 NS_SOAP_URL = 'http://www.w3.org/2003/05/soap-envelope'
 NS_SOAP_PREFIX = 'soap'
 NS_SOAP_MAP = {NS_SOAP_PREFIX: NS_SOAP_URL}

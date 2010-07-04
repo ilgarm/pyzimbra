@@ -26,7 +26,7 @@ Account info samples.
 
 @author: ilgar
 """
-from pyzimbra import soap, sconstant, zconstant
+from pyzimbra import soap, sconstant, zconstant, pconstant
 from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
 from pyzimbra.zclient import ZimbraClient
@@ -38,19 +38,19 @@ def get_proxied_info():
 
     transport = SoapTransport()
     transport.debug = 1
-    transport.url = soap.soap_url(p['hostname'])
-    transport.proxy_url = soap.proxy_url(p['proxy_hostname'],
-                                         p['proxy_username'],
-                                         p['proxy_password'],
-                                         p['proxy_port'],
-                                         p['proxy_scheme'])
+    transport.domains = p[pconstant.DOMAINS]
+    transport.proxy_url = soap.proxy_url(p[pconstant.PROXY_HOSTNAME],
+                                         p[pconstant.PROXY_USERNAME],
+                                         p[pconstant.PROXY_PASSWORD],
+                                         p[pconstant.PROXY_PORT],
+                                         p[pconstant.PROXY_SCHEME])
 
     auth = SoapAuthenticator()
 
     zclient = ZimbraClient()
     zclient.transport = transport
 
-    zclient.authenticate(auth, p['account_name'], p['password'])
+    zclient.authenticate(auth, p[pconstant.ACCOUNT_NAME], p[pconstant.PASSWORD])
 
     params = {sconstant.A_SECTIONS: sconstant.V_MBOX}
     res = zclient.invoke(zconstant.NS_ZIMBRA_ACC_URL,

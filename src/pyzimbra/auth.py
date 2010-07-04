@@ -77,7 +77,7 @@ class Authenticator(object):
     @abc.abstractmethod
     def authenticate(self, transport, account_name, password):
         """
-        Authenticates account.
+        Authenticates account, if no password given tries to pre-authenticate.
         @param transport: transport to use for method calls
         @param account_name: account name
         @param password: account password
@@ -89,6 +89,3 @@ class Authenticator(object):
 
         if util.empty(account_name):
             raise AuthException('Empty account name')
-
-        if util.empty(password):
-            raise AuthException('Empty password')

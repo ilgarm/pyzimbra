@@ -26,11 +26,12 @@ Authentication related methods and classes.
 
 @author: ilgar
 """
-from pyzimbra.auth import Authenticator, AuthException, AuthToken
+from pyzimbra.auth import AuthException, AuthToken
+from pyzimbra.soap_auth import SoapAuthenticator
 from util import load_test_properties
 
 
-class MockAuthenticator(Authenticator):
+class MockAuthenticator(SoapAuthenticator):
     """
     Mocked authenticator.
     """
@@ -38,18 +39,28 @@ class MockAuthenticator(Authenticator):
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
-        Authenticator.__init__(self)
+        SoapAuthenticator.__init__(self)
 
         load_test_properties(self)
 
     # ------------------------------------------------------------------ unbound
-    def authenticate(self, transport, account_name, password):
-        Authenticator.authenticate(self, transport, account_name, password)
-
+    def auth(self, transport, account_name, password):
         if not account_name == self.account_name:
             raise AuthException('Invalid username')
 
         if not password == self.password:
+            raise AuthException('Invalid password')
+
+        token = AuthToken()
+        token.account_name = self.account_name
+        token.token = self.token
+        token.session_id = self.session_id
+
+        return token
+
+
+    def pre_auth(self, transport, account_name):
+        if not account_name == self.account_name:
             raise AuthException('Invalid username')
 
         token = AuthToken()

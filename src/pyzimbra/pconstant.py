@@ -22,26 +22,32 @@
 # along with Pyzimbra.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-Test related methods and classes.
-
 @author: ilgar
 """
-from ConfigParser import ConfigParser
-from pyzimbra import pconstant
 
 
-def load_test_properties(test):
-    cfg = ConfigParser()
-    if len(cfg.read("test.properties")) == 0:
-        cfg.read("../test.properties")
+NAME = 'name'
+HOST = 'host'
+KEY = 'key'
+SCHEME = 'scheme'
+PORT = 'port'
+USERNAME = 'username'
+PASSWORD = 'password'
 
-    test.domain = cfg.get(pconstant.DOMAIN, pconstant.NAME)
-    test.hostname = cfg.get(pconstant.DOMAIN, pconstant.HOST)
-    test.domain_key = cfg.get(pconstant.DOMAIN, pconstant.KEY)
+DOMAIN = 'domain'
+HOSTNAME = 'hostname'
+DOMAIN_KEY = 'domain_key'
+DOMAINS = 'domains'
 
-    test.username = cfg.get(pconstant.AUTH, pconstant.USERNAME)
-    test.account_name = '%s@%s' % (test.username, test.domain)
-    test.account_id = cfg.get(pconstant.AUTH, pconstant.ID)
-    test.password = cfg.get(pconstant.AUTH, pconstant.PASSWORD)
-    test.token = cfg.get(pconstant.AUTH, pconstant.TOKEN)
-    test.session_id = cfg.get(pconstant.AUTH, pconstant.SESSION_ID)
+PROXY = 'proxy'
+PROXY_SCHEME = 'proxy_scheme'
+PROXY_HOSTNAME = 'proxy_hostname'
+PROXY_PORT = 'proxy_port'
+PROXY_USERNAME = 'proxy_username'
+PROXY_PASSWORD = 'proxy_password'
+
+AUTH = 'auth'
+ID = 'id'
+ACCOUNT_NAME = 'account_name'
+TOKEN = 'token'
+SESSION_ID = 'session_id'

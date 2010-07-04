@@ -24,6 +24,7 @@
 
 @author: ilgar
 """
+import re
 
 
 def empty(val):
@@ -35,8 +36,21 @@ def empty(val):
     if val == None:
         return True
 
-    # TODO: add emptiness checks for commonly used types
     if isinstance(val,str) and len(val) > 0:
         return False
 
     return True
+
+
+def get_domain(email):
+    """
+    Returns domain part of the email or None if invalid email format.
+    @param email: email
+    @return: str
+    """
+    match = re.search('^[^@]*?@([^@]+?)$', email)
+
+    if match == None:
+        return None
+
+    return match.group(1)

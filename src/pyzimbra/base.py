@@ -77,8 +77,8 @@ class ZimbraClientTransport(object):
     __metaclass__ = abc.ABCMeta
 
     # --------------------------------------------------------------- properties
-    url = property(lambda self: self._url,
-                   lambda self, v: setattr(self, '_url', v))
+    domains = property(lambda self: self._domains,
+                       lambda self, v: setattr(self, '_domains', v))
     proxy_url = property(lambda self: self._proxy_url,
                          lambda self, v: setattr(self, '_proxy_url', v))
     debug = property(lambda self: self._debug,
@@ -86,7 +86,7 @@ class ZimbraClientTransport(object):
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
-        self.url = None
+        self.domains = {}
         self.proxy_url = None
         self.debug = 0
 
@@ -101,3 +101,5 @@ class ZimbraClientTransport(object):
         @param auth_token: authentication token to use for session
         @return: zimbra response
         """
+        if auth_token == None:
+            raise ZimbraClientException('Invalid auth token')

@@ -27,6 +27,7 @@ Account info samples.
 @author: ilgar
 """
 from ConfigParser import ConfigParser
+from pyzimbra import pconstant
 
 
 def load_properties():
@@ -35,18 +36,21 @@ def load_properties():
     cfg.read(properties)
 
     p = {}
-    p['domain'] = cfg.get("domain", "name")
-    p['hostname'] = cfg.get("domain", "host")
-    p['domain_key'] = cfg.get("domain", "key")
+    p[pconstant.DOMAIN] = cfg.get(pconstant.DOMAIN, pconstant.NAME)
+    p[pconstant.HOSTNAME] = cfg.get(pconstant.DOMAIN, pconstant.HOST)
+    p[pconstant.DOMAIN_KEY] = cfg.get(pconstant.DOMAIN, pconstant.KEY)
+    p[pconstant.DOMAINS] = {p[pconstant.DOMAIN]:
+                    {pconstant.HOSTNAME: p[pconstant.HOSTNAME],
+                     pconstant.KEY: p[pconstant.DOMAIN_KEY]}}
 
-    p['proxy_scheme'] = cfg.get("proxy", "scheme")
-    p['proxy_hostname'] = cfg.get("proxy", "host")
-    p['proxy_port'] = cfg.get("proxy", "port")
-    p['proxy_username'] = cfg.get("proxy", "username")
-    p['proxy_password'] = cfg.get("proxy", "password")
+    p[pconstant.PROXY_SCHEME] = cfg.get(pconstant.PROXY, pconstant.SCHEME)
+    p[pconstant.PROXY_HOSTNAME] = cfg.get(pconstant.PROXY, pconstant.HOST)
+    p[pconstant.PROXY_PORT] = cfg.get(pconstant.PROXY, pconstant.SCHEME)
+    p[pconstant.PROXY_USERNAME] = cfg.get(pconstant.PROXY, pconstant.USERNAME)
+    p[pconstant.PROXY_PASSWORD] = cfg.get(pconstant.PROXY, pconstant.PASSWORD)
 
-    p['username'] = cfg.get("auth", "username")
-    p['account_name'] = '%s@%s' % (p['username'], p['domain'])
-    p['password'] = cfg.get("auth", "password")
+    p[pconstant.USERNAME] = cfg.get(pconstant.AUTH, pconstant.USERNAME)
+    p[pconstant.ACCOUNT_NAME] = '%s@%s' % (p[pconstant.USERNAME], p[pconstant.DOMAIN])
+    p[pconstant.PASSWORD] = cfg.get(pconstant.AUTH, pconstant.PASSWORD)
 
     return p

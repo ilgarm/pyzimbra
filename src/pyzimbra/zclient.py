@@ -71,8 +71,7 @@ class ZimbraClient(object):
           if not provided existing one will be used 
         @return: zimbra response
         @raise AuthException: if authentication fails
-        @raise SoapException: if soap communication fails
-        @raise ZimbraClientException: wrapped server exception
+        @raise SoapException: wrapped server exception
         """
         if self.auth_token == None and auth_token == None:
             raise AuthException('Unable to invoke zimbra method')

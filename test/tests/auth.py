@@ -79,7 +79,7 @@ class AuthTest(BaseTest, unittest.TestCase):
         self.assertRaises(AuthException,
                           a.authenticate, transport, self.username, "")
         self.assertRaises(AuthException,
-                          a.authenticate, transport, "", "") 
+                          a.authenticate, transport, "", "")
 
 
     def testAuthValidCredentials(self):
@@ -102,6 +102,34 @@ class AuthTest(BaseTest, unittest.TestCase):
                           a.authenticate, transport, "wrong", self.password)
         self.assertRaises(AuthException,
                           a.authenticate, transport, self.account_name, "wrong")
+
+
+    def testPreAuthEmptyCredentials(self):
+        a = MockAuthenticator()
+        transport = MockTransport()
+
+        self.assertRaises(AuthException,
+                          a.authenticate, transport, "")
+
+
+    def testPreAuthValidCredentials(self):
+        a = MockAuthenticator()
+        transport = MockTransport()
+
+        auth_token = a.authenticate(transport, self.account_name)
+
+        self.assertTrue(auth_token != None)
+        self.assertEquals(self.account_name, auth_token.account_name)
+        self.assertEquals(self.token, auth_token.token)
+        self.assertEquals(self.session_id, auth_token.session_id)
+
+
+    def testPreAuthInvalidCredentials(self):
+        a = MockAuthenticator()
+        transport = MockTransport()
+
+        self.assertRaises(AuthException,
+                          a.authenticate, transport, "wrong", self.password)
 
 
 if __name__ == "__main__":

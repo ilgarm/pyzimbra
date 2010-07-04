@@ -27,7 +27,6 @@ Soap related mockups.
 @author: ilgar
 """
 from mock import responses
-from pyzimbra.auth import AuthToken
 from pyzimbra.base import ZimbraClientTransport
 from pyzimbra.soap import SoapException
 from util import load_test_properties
@@ -49,9 +48,7 @@ class MockTransport(ZimbraClientTransport):
     # ------------------------------------------------------------------ unbound
     def invoke(self, ns, request_name, params, auth_token):
 
-        if auth_token == None:
-            auth_token = AuthToken()
-            auth_token.account_name = self.account_name
+        if auth_token.token == None:
             auth_token.token = self.token
             auth_token.session_id = self.session_id
 

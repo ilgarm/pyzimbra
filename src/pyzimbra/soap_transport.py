@@ -26,7 +26,7 @@ Soap related methods and classes.
 
 @author: ilgar
 """
-from pyzimbra import zconstant, sconstant, util
+from pyzimbra import zconstant, sconstant, util, soap, pconstant
 from pyzimbra.base import ZimbraClientTransport
 from pyzimbra.soap import SoapException
 from pyzimbra.soap_soappy import parseSOAP
@@ -50,11 +50,13 @@ class SoapHttpTransport(SOAPpy.Client.HTTPTransport):
         if not isinstance(addr, SOAPpy.Client.SOAPAddress):
             addr = SOAPpy.Client.SOAPAddress(addr, config)
 
+        url = addr.proto + "://" + addr.host + addr.path
+
         headers = {'User-Agent': zconstant.USER_AGENT}
-        request = urllib2.Request(self.transport.url, data, headers)
+        request = urllib2.Request(url, data, headers)
 
         if self.transport.debug == 1:
-            print 'Request url: ', self.transport.url
+            print 'Request url: ', url
             print 'Request headers: '
             print request.headers
             print 'Request data: '
@@ -145,17 +147,29 @@ class SoapTransport(ZimbraClientTransport):
         """
         Invokes zimbra soap request.
         """
+        ZimbraClientTransport.invoke(self, ns, request_name, params, auth_token)
+
         headers = SOAPpy.Types.headerType()
 
-        if auth_token != None:
+        domain = util.get_domain(auth_token.account_name)
+        if domain == None:
+            raise SoapException('Invalid auth token account')
+
+        if domain in self.domains and pconstant.HOSTNAME in self.domains[domain]:
+            hostname = self.domains[domain][pconstant.HOSTNAME]
+        else:
+            hostname = domain
+        url = soap.soap_url(hostname)
+
+        if auth_token.token != None:
             data={sconstant.E_AUTH_TOKEN: auth_token.token,
                   sconstant.E_SESSION_ID: auth_token.session_id}
             context = SOAPpy.Types.structType(data=data, name=sconstant.CONTEXT)
             context._validURIs = []
-            context._ns = ("ns1", zconstant.NS_ZIMBRA_URL)
+            context._ns = (zconstant.SOAP_DEFAULT_PREFIX, zconstant.NS_ZIMBRA_URL)
             headers.context = context
 
-        proxy = SOAPpy.SOAPProxy(self.url, ns, header=headers, noroot=1)
+        proxy = SOAPpy.SOAPProxy(url, ns, header=headers, noroot=1)
         proxy.config.debug = self.debug
         proxy.config.strictNamespaces = 0
         proxy.config.buildWithNamespacePrefix = 0
