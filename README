@@ -13,3 +13,4 @@ ticket:22 - rewrite all xml manipulations to use single library, minidom or lxml
 ticket:31 - add proxy support
 ticket:27 - error and exception handling
 ticket:33 - switch to SOAPpy
+ticket:20 - zimbra client preauthentication
