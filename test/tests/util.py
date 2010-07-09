@@ -24,8 +24,8 @@
 
 @author: ilgar
 """
-from base import BaseTest
 from pyzimbra import util
+from test.base import BaseTest
 import unittest
 
 

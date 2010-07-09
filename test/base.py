@@ -24,7 +24,7 @@
 
 @author: ilgar
 """
-from util import load_test_properties
+from test.util import load_test_properties
 
 
 class BaseTest(object):

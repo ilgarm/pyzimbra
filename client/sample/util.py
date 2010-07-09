@@ -27,7 +27,7 @@ Account info samples.
 @author: ilgar
 """
 from ConfigParser import ConfigParser
-import pconstant
+from test import pconstant
 
 
 def load_properties():

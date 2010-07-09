@@ -26,12 +26,12 @@ Account info samples.
 
 @author: ilgar
 """
+from client.sample.util import load_properties
 from pyzimbra import sconstant, zconstant, soap
 from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
 from pyzimbra.zclient import ZimbraClient
-from sample.util import load_properties
-import pconstant
+from test import pconstant
 
 
 def get_info():

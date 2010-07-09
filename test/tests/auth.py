@@ -24,12 +24,12 @@
 
 @author: ilgar
 """
-from base import BaseTest
-from mock.auth import MockAuthenticator
-from mock.soap import MockTransport
 from pyzimbra import util
 from pyzimbra.auth import AuthToken, AuthException
 from pyzimbra.base import ZimbraClientException
+from test.base import BaseTest
+from test.mock.auth import MockAuthenticator
+from test.mock.soap import MockTransport
 import unittest
 
 

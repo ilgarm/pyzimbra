@@ -28,7 +28,7 @@ Authentication related methods and classes.
 """
 from pyzimbra.auth import AuthException, AuthToken, Authenticator
 from pyzimbra.soap_auth import SoapAuthenticator
-from util import load_test_properties
+from test.util import load_test_properties
 
 
 class MockAuthenticator(SoapAuthenticator):

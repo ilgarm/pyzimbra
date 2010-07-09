@@ -24,9 +24,9 @@
 
 @author: ilgar
 """
-from base import BaseTest
-from mock.soap import MockTransport
 from pyzimbra.soap_transport import SoapHttpTransport
+from test.base import BaseTest
+from test.mock.soap import MockTransport
 import unittest
 import urllib2
 

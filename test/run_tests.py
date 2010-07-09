@@ -26,12 +26,12 @@ Test related methods and classes.
 
 @author: ilgar
 """
-from tests.auth import AuthTest
-from tests.soap import SoapTest
-from tests.soap_auth import SoapAuthTest
-from tests.soap_transport import SoapHttpTransportTest
-from tests.util import UtilTest
-from tests.zclient import ZimbraClientTest
+from test.tests.auth import AuthTest
+from test.tests.soap import SoapTest
+from test.tests.soap_auth import SoapAuthTest
+from test.tests.soap_transport import SoapHttpTransportTest
+from test.tests.util import UtilTest
+from test.tests.zclient import ZimbraClientTest
 import unittest
 
 

@@ -26,9 +26,9 @@ Zimbra client related methods and classes.
 
 @author: ilgar
 """
+from pyzimbra import util
 from pyzimbra.auth import AuthException
 from pyzimbra.base import ZimbraClientException
-from pyzimbra import util
 
 
 class ZimbraClient(object):

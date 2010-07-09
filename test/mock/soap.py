@@ -26,10 +26,10 @@ Soap related mockups.
 
 @author: ilgar
 """
-from mock import responses
 from pyzimbra.base import ZimbraClientTransport
 from pyzimbra.soap import SoapException
-from util import load_test_properties
+from test.mock import responses
+from test.util import load_test_properties
 
 
 class MockTransport(ZimbraClientTransport):

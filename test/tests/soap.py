@@ -24,9 +24,9 @@
 
 @author: ilgar
 """
-from base import BaseTest
 from pyzimbra import soap
 from pyzimbra.soap import SoapException
+from test.base import BaseTest
 import unittest
 
 
