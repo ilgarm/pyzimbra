@@ -1,6 +1,8 @@
 .project
 .pydevproject
 .settings
+dist
+MANIFEST
 *.pyc
 .DS_Store
 client-local.properties
