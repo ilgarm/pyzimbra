@@ -14,3 +14,4 @@ ticket:31 - add proxy support
 ticket:27 - error and exception handling
 ticket:33 - switch to SOAPpy
 ticket:20 - zimbra client preauthentication
+ticket:21 - zimbra client administrative authentication

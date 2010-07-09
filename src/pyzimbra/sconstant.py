@@ -40,6 +40,9 @@ AuthResponse = 'AuthResponse'
 GetInfoRequest = 'GetInfoRequest'
 GetInfoResponse = 'GetInfoResponse'
 
+GetAccountRequest = 'GetAccountRequest'
+GetAccountResponse = 'GetAccountResponse'
+
 E_CODE = 'Code'
 E_TRACE = 'Trace'
 

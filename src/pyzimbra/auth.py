@@ -68,12 +68,25 @@ class Authenticator(object):
     __metaclass__ = abc.ABCMeta
 
     # --------------------------------------------------------------- properties
+    domains = property(lambda self: self._domains,
+                       lambda self, v: setattr(self, '_domains', v))
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
-        pass
+        self.domains = {}
 
     # ------------------------------------------------------------------ unbound
+    @abc.abstractmethod
+    def authenticate_admin(self, transport, account_name, password):
+        """
+        Authenticates administrator using username and password.
+        @param transport: transport to use for method calls
+        @param account_name: account name
+        @param password: account password
+        @return: AuthToken if authentication succeeded
+        @raise AuthException: if authentication fails
+        """
+
     @abc.abstractmethod
     def authenticate(self, transport, account_name, password):
         """

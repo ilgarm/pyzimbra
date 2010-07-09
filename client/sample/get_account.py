@@ -22,30 +22,45 @@
 # along with Pyzimbra.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+Account info samples.
+
 @author: ilgar
 """
+from pyzimbra import sconstant, zconstant, soap
+from pyzimbra.soap_auth import SoapAuthenticator
+from pyzimbra.soap_transport import SoapTransport
+from pyzimbra.zclient import ZimbraClient
+from sample.util import load_properties
+import SOAPpy
+import pconstant
 
-__version__ = '0.1'
-USER_AGENT = "pyzimbra/%s" % __version__
 
-SOAP_URL = '/service/soap'
-SOAP_ADMIN_URL = '/service/admin/soap'
+def get_account():
+    p = load_properties()
 
-SOAP_DEFAULT_PREFIX = 'ns1'
+    transport = SoapTransport()
+    transport.debug = 1
+    transport.soap_url = soap.admin_soap_url(p[pconstant.ADMIN_HOSTNAME])
 
-NS_SOAP_URL = 'http://www.w3.org/2003/05/soap-envelope'
-NS_SOAP_PREFIX = 'soap'
-NS_SOAP_MAP = {NS_SOAP_PREFIX: NS_SOAP_URL}
-NS_SOAP = '{%s}' % NS_SOAP_URL
+    auth = SoapAuthenticator()
 
-NS_ZIMBRA_URL = 'urn:zimbra'
-NS_ZIMBRA_MAP = {None: NS_ZIMBRA_URL}
-NS_ZIMBRA = '{%s}' % NS_ZIMBRA_URL
+    zclient = ZimbraClient()
+    zclient.transport = transport
 
-NS_ZIMBRA_ACC_URL = 'urn:zimbraAccount'
-NS_ZIMBRA_ACC_MAP = {None: NS_ZIMBRA_ACC_URL}
-NS_ZIMBRA_ACC = '{%s}' % NS_ZIMBRA_ACC_URL
+    zclient.authenticate_admin(auth,
+                         p[pconstant.ADMIN_ACCOUNT_NAME],
+                         p[pconstant.ADMIN_PASSWORD])
 
-NS_ZIMBRA_ADMIN_URL = 'urn:zimbraAdmin'
-NS_ZIMBRA_ACC_MAP = {None: NS_ZIMBRA_ADMIN_URL}
-NS_ZIMBRA_ACC = '{%s}' % NS_ZIMBRA_ADMIN_URL
+    attrs = {sconstant.A_BY: sconstant.V_NAME}
+    account = SOAPpy.Types.stringType(data=p[pconstant.ACCOUNT_NAME], attrs=attrs)
+
+    params = {sconstant.E_ACCOUNT: account}
+    res = zclient.invoke(zconstant.NS_ZIMBRA_ADMIN_URL,
+                         sconstant.GetAccountRequest,
+                         params)
+
+    print res
+
+
+if __name__ == '__main__':
+    get_account()

@@ -64,6 +64,46 @@ class AuthTest(BaseTest, unittest.TestCase):
         self.assertFalse(util.empty(auth_token.session_id))
 
 
+    def testAdminAuthEmptyTransport(self):
+        a = MockAuthenticator()
+
+        self.assertRaises(ZimbraClientException, a.authenticate_admin, None, "", "")
+
+
+    def testAdminAuthEmptyCredentials(self):
+        a = MockAuthenticator()
+        transport = MockTransport()
+
+        self.assertRaises(AuthException,
+                          a.authenticate_admin, transport, "", self.password)
+        self.assertRaises(AuthException,
+                          a.authenticate_admin, transport, self.username, "")
+        self.assertRaises(AuthException,
+                          a.authenticate_admin, transport, "", "")
+
+
+    def testAdminAuthValidCredentials(self):
+        a = MockAuthenticator()
+        transport = MockTransport()
+
+        auth_token = a.authenticate(transport, self.account_name, self.password)
+
+        self.assertTrue(auth_token != None)
+        self.assertEquals(self.account_name, auth_token.account_name)
+        self.assertEquals(self.token, auth_token.token)
+        self.assertEquals(self.session_id, auth_token.session_id)
+
+
+    def testAdminAuthInvalidCredentials(self):
+        a = MockAuthenticator()
+        transport = MockTransport()
+
+        self.assertRaises(AuthException,
+                          a.authenticate, transport, "wrong", self.password)
+        self.assertRaises(AuthException,
+                          a.authenticate, transport, self.account_name, "wrong")
+
+
     def testAuthEmptyTransport(self):
         a = MockAuthenticator()
 

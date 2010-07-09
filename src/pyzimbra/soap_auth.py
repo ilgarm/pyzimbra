@@ -26,7 +26,7 @@ Soap related methods and classes.
 
 @author: ilgar
 """
-from pyzimbra import zconstant, sconstant, util, pconstant
+from pyzimbra import zconstant, sconstant, util
 from pyzimbra.auth import AuthException, AuthToken, Authenticator
 from pyzimbra.soap import SoapException
 from time import time
@@ -45,6 +45,31 @@ class SoapAuthenticator(Authenticator):
         Authenticator.__init__(self)
 
     # ------------------------------------------------------------------ unbound
+    def authenticate_admin(self, transport, account_name, password):
+        """
+        Authenticates administrator using username and password.
+        """
+        Authenticator.authenticate_admin(self, transport, account_name, password)
+
+        auth_token = AuthToken()
+        auth_token.account_name = account_name
+
+        params = {sconstant.E_NAME: account_name,
+                  sconstant.E_PASSWORD: password}
+        try:
+            res = transport.invoke(zconstant.NS_ZIMBRA_ADMIN_URL,
+                                   sconstant.AuthRequest,
+                                   params,
+                                   auth_token)
+        except SoapException as exc:
+            raise AuthException(unicode(exc), exc)
+
+        auth_token.token = res.authToken
+        auth_token.session_id = res.sessionId
+
+        return auth_token
+
+
     def authenticate(self, transport, account_name, password=None):
         """
         Authenticates account using soap method.
@@ -78,7 +103,9 @@ class SoapAuthenticator(Authenticator):
             raise AuthException(unicode(exc), exc)
 
         auth_token.token = res.authToken
-        auth_token.session_id = res.sessionId
+        
+        if hasattr(res, 'sessionId'):
+            auth_token.session_id = res.sessionId
 
         return auth_token
 
@@ -94,8 +121,8 @@ class SoapAuthenticator(Authenticator):
         if domain == None:
             raise AuthException('Invalid auth token account')
 
-        if domain in transport.domains and pconstant.KEY in transport.domains[domain]:
-            domain_key = transport.domains[domain][pconstant.KEY]
+        if domain in self.domains:
+            domain_key = self.domains[domain]
         else:
             domain_key = None
 

@@ -26,11 +26,12 @@ Authentication samples.
 
 @author: ilgar
 """
-from pyzimbra import pconstant
+from pyzimbra import soap
 from pyzimbra.base import ZimbraClientException
 from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
 from sample.util import load_properties
+import pconstant
 
 
 def authenticate():
@@ -38,7 +39,7 @@ def authenticate():
 
     transport = SoapTransport()
     transport.debug = 1
-    transport.domains = p[pconstant.DOMAINS]
+    transport.soap_url = soap.soap_url(p[pconstant.HOSTNAME])
 
     auth = SoapAuthenticator()
     auth_token = auth.authenticate(transport,
@@ -53,10 +54,11 @@ def pre_authenticate():
 
     transport = SoapTransport()
     transport.debug = 1
-    transport.domains = p[pconstant.DOMAINS]
+    transport.soap_url = soap.soap_url(p[pconstant.HOSTNAME])
 
     auth = SoapAuthenticator()
-    auth_token = auth.authenticate(transport, pconstant.ACCOUNT_NAME)
+    auth.domains = p[pconstant.DOMAINS]
+    auth_token = auth.authenticate(transport, p[pconstant.ACCOUNT_NAME])
 
     print auth_token.token
 

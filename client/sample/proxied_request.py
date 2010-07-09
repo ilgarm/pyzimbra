@@ -26,11 +26,12 @@ Account info samples.
 
 @author: ilgar
 """
-from pyzimbra import soap, sconstant, zconstant, pconstant
+from pyzimbra import soap, sconstant, zconstant
 from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
 from pyzimbra.zclient import ZimbraClient
 from sample.util import load_properties
+import pconstant
 
 
 def get_proxied_info():
@@ -38,7 +39,7 @@ def get_proxied_info():
 
     transport = SoapTransport()
     transport.debug = 1
-    transport.domains = p[pconstant.DOMAINS]
+    transport.soap_url = soap.soap_url(p[pconstant.HOSTNAME])
     transport.proxy_url = soap.proxy_url(p[pconstant.PROXY_HOSTNAME],
                                          p[pconstant.PROXY_USERNAME],
                                          p[pconstant.PROXY_PASSWORD],

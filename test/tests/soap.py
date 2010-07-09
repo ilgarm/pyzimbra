@@ -51,6 +51,25 @@ class SoapTest(BaseTest, unittest.TestCase):
         self.assertEqual("http://localhost/service/soap", result)
 
 
+    def testNotEmptyHostnamePort(self):
+        result = soap.soap_url("localhost:8080")
+        self.assertEqual("http://localhost:8080/service/soap", result)
+
+
+    def testEmptyAdminHostname(self):
+        self.assertRaises(SoapException, soap.admin_soap_url, "")
+
+
+    def testNotEmptyAdminHostname(self):
+        result = soap.admin_soap_url("localhost")
+        self.assertEqual("https://localhost/service/admin/soap", result)
+
+
+    def testNotEmptyAdminHostnamePort(self):
+        result = soap.admin_soap_url("localhost:8080")
+        self.assertEqual("https://localhost:8080/service/admin/soap", result)
+
+
     def testEmptyProxyHostname(self):
         self.assertRaises(SoapException, soap.proxy_url, "")
 

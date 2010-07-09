@@ -47,6 +47,22 @@ class ZimbraClient(object):
         self.transport = None
 
     # ------------------------------------------------------------------ unbound
+    def authenticate_admin(self, authenticator, account_name, password):
+        """
+        Authenticates zimbra administrative account.
+        @param authenticator: authenticator to use
+        @param account_name: account email address
+        @param password: account password
+        @raise AuthException: if authentication fails
+        @raise SoapException: if soap communication fails
+        """
+        if self.transport == None:
+            raise ZimbraClientException('Invalid transport')
+
+        self._auth_token = authenticator.authenticate_admin(self.transport,
+                                                            account_name,
+                                                            password)
+
     def authenticate(self, authenticator, account_name, password):
         """
         Authenticates zimbra account.

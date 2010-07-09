@@ -39,6 +39,11 @@ HOSTNAME = 'hostname'
 DOMAIN_KEY = 'domain_key'
 DOMAINS = 'domains'
 
+ADMIN = 'admin'
+ADMIN_HOSTNAME = 'admin_hostname'
+ADMIN_ACCOUNT_NAME = 'admin_account_name'
+ADMIN_PASSWORD = 'admin_password'
+
 PROXY = 'proxy'
 PROXY_SCHEME = 'proxy_scheme'
 PROXY_HOSTNAME = 'proxy_hostname'

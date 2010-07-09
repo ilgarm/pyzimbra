@@ -77,8 +77,8 @@ class ZimbraClientTransport(object):
     __metaclass__ = abc.ABCMeta
 
     # --------------------------------------------------------------- properties
-    domains = property(lambda self: self._domains,
-                       lambda self, v: setattr(self, '_domains', v))
+    soap_url = property(lambda self: self._soap_url,
+                        lambda self, v: setattr(self, '_soap_url', v))
     proxy_url = property(lambda self: self._proxy_url,
                          lambda self, v: setattr(self, '_proxy_url', v))
     debug = property(lambda self: self._debug,
@@ -86,7 +86,7 @@ class ZimbraClientTransport(object):
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
-        self.domains = {}
+        self.soap_url = None
         self.proxy_url = None
         self.debug = 0
 

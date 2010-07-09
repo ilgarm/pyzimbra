@@ -27,13 +27,17 @@ Test related methods and classes.
 @author: ilgar
 """
 from ConfigParser import ConfigParser
-from pyzimbra import pconstant
+import pconstant
 
 
 def load_test_properties(test):
     cfg = ConfigParser()
     if len(cfg.read("test.properties")) == 0:
         cfg.read("../test.properties")
+
+    test.admin_hostname = cfg.get(pconstant.ADMIN, pconstant.HOST)
+    test.admin_account_name = cfg.get(pconstant.ADMIN, pconstant.USERNAME)
+    test.admin_password = cfg.get(pconstant.ADMIN, pconstant.PASSWORD)
 
     test.domain = cfg.get(pconstant.DOMAIN, pconstant.NAME)
     test.hostname = cfg.get(pconstant.DOMAIN, pconstant.HOST)
