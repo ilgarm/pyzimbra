@@ -33,6 +33,7 @@ from time import time
 import SOAPpy
 import hashlib
 import hmac
+import logging
 
 class SoapAuthenticator(Authenticator):
     """
@@ -43,6 +44,7 @@ class SoapAuthenticator(Authenticator):
     # -------------------------------------------------------------------- bound
     def __init__(self):
         Authenticator.__init__(self)
+        self.log = logging.getLogger(__name__)
 
     # ------------------------------------------------------------------ unbound
     def authenticate_admin(self, transport, account_name, password):
@@ -56,6 +58,8 @@ class SoapAuthenticator(Authenticator):
 
         params = {sconstant.E_NAME: account_name,
                   sconstant.E_PASSWORD: password}
+
+        self.log.debug('Authenticating admin %s' % account_name)
         try:
             res = transport.invoke(zconstant.NS_ZIMBRA_ADMIN_URL,
                                    sconstant.AuthRequest,
@@ -66,6 +70,9 @@ class SoapAuthenticator(Authenticator):
 
         auth_token.token = res.authToken
         auth_token.session_id = res.sessionId
+
+        self.log.info('Authenticated admin %s, session id %s'
+                      % (account_name, auth_token.session_id))
 
         return auth_token
 
@@ -94,6 +101,8 @@ class SoapAuthenticator(Authenticator):
 
         params = {sconstant.E_ACCOUNT: account,
                   sconstant.E_PASSWORD: password}
+
+        self.log.debug('Authenticating account %s' % account_name)
         try:
             res = transport.invoke(zconstant.NS_ZIMBRA_ACC_URL,
                                    sconstant.AuthRequest,
@@ -106,6 +115,9 @@ class SoapAuthenticator(Authenticator):
         
         if hasattr(res, 'sessionId'):
             auth_token.session_id = res.sessionId
+
+        self.log.info('Authenticated account %s, session id %s'
+                      % (account_name, auth_token.session_id))
 
         return auth_token
 
@@ -129,6 +141,9 @@ class SoapAuthenticator(Authenticator):
         if domain_key == None:
             raise AuthException('Invalid domain key for domain %s' % domain)
 
+        self.log.debug('Initialized domain key for account %s'
+                      % account_name)
+
         expires = 0
         timestamp = int(time() * 1000)
         pak = hmac.new(domain_key, '%s|%s|%s|%s' %
@@ -145,6 +160,9 @@ class SoapAuthenticator(Authenticator):
 
         params = {sconstant.E_ACCOUNT: account,
                   sconstant.E_PREAUTH: preauth}
+
+        self.log.debug('Authenticating account %s using domain key'
+                       % account_name)
         try:
             res = transport.invoke(zconstant.NS_ZIMBRA_ACC_URL,
                                    sconstant.AuthRequest,
@@ -155,5 +173,8 @@ class SoapAuthenticator(Authenticator):
 
         auth_token.token = res.authToken
         auth_token.session_id = res.sessionId
+
+        self.log.info('Authenticated account %s, session id %s'
+                      % (account_name, auth_token.session_id))
 
         return auth_token

@@ -81,14 +81,11 @@ class ZimbraClientTransport(object):
                         lambda self, v: setattr(self, '_soap_url', v))
     proxy_url = property(lambda self: self._proxy_url,
                          lambda self, v: setattr(self, '_proxy_url', v))
-    debug = property(lambda self: self._debug,
-                   lambda self, v: setattr(self, '_debug', v))
 
     # -------------------------------------------------------------------- bound
     def __init__(self):
         self.soap_url = None
         self.proxy_url = None
-        self.debug = 0
 
     # ------------------------------------------------------------------ unbound
     @abc.abstractmethod

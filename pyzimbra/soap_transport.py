@@ -30,6 +30,7 @@ from pyzimbra import zconstant, sconstant
 from pyzimbra.base import ZimbraClientTransport
 from pyzimbra.soap_soappy import parseSOAP, SoapHttpTransport
 import SOAPpy
+import logging
 
 
 class SoapTransport(ZimbraClientTransport):
@@ -44,6 +45,7 @@ class SoapTransport(ZimbraClientTransport):
     def __init__(self):
         ZimbraClientTransport.__init__(self)
         self.http_transport.transport = self
+        self.log = logging.getLogger(__name__)
 
 
     # ------------------------------------------------------------------ unbound
@@ -64,7 +66,7 @@ class SoapTransport(ZimbraClientTransport):
             headers.context = context
 
         proxy = SOAPpy.SOAPProxy(self.soap_url, ns, header=headers, noroot=1)
-        proxy.config.debug = self.debug
+        proxy.config.debug = self.log.isEnabledFor(logging.DEBUG)
         proxy.config.strictNamespaces = 0
         proxy.config.buildWithNamespacePrefix = 0
         proxy.transport = self.http_transport

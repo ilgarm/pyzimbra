@@ -29,6 +29,7 @@ SOAPPy related methods and classes.
 from pyzimbra import zconstant, util
 from pyzimbra.soap import SoapException
 import SOAPpy
+import logging
 import urllib2
 import xml.sax
 
@@ -52,7 +53,7 @@ class ZimbraSOAPParser(SOAPpy.SOAPParser):
 
 def parseSOAP(xml_str, rules = None):
     """
-    Replacement for soappy parseSOAP method to spoof SOAPParser.
+    Replacement for SOAPpy._parseSOAP method to spoof SOAPParser.
     """
     try:
         from cStringIO import StringIO
@@ -89,6 +90,11 @@ class SoapHttpTransport(SOAPpy.Client.HTTPTransport):
                          lambda self, v: setattr(self, '_transport', v))
 
 
+    # -------------------------------------------------------------------- bound
+    def __init__(self):
+        self.log = logging.getLogger(__name__)
+
+
     # ------------------------------------------------------------------ unbound
     def call(self, addr, data, namespace, soapaction = None, encoding = None,
         http_proxy = None, config = SOAPpy.Config):
@@ -101,23 +107,21 @@ class SoapHttpTransport(SOAPpy.Client.HTTPTransport):
         headers = {'User-Agent': zconstant.USER_AGENT}
         request = urllib2.Request(url, data, headers)
 
-        if self.transport.debug == 1:
-            print 'Request url: ', url
-            print 'Request headers: '
-            print request.headers
-            print 'Request data: '
-            print data
+        self.log.debug('Request url: %s' % url)
+        self.log.debug('Request headers')
+        self.log.debug(request.headers)
+        self.log.debug('Request data')
+        self.log.debug(data)
 
         try:
             opener = self.build_opener()
             response = opener.open(request)
             data = response.read()
 
-            if self.transport.debug == 1:
-                print 'Response headers: '
-                print response.headers
-                print 'Response data: '
-                print data
+            self.log.debug('Response headers')
+            self.log.debug(response.headers)
+            self.log.debug('Response data')
+            self.log.debug(data)
 
         except urllib2.URLError as exc:
             raise self.init_soap_exception(exc)

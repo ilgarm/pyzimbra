@@ -32,13 +32,14 @@ from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
 from pyzimbra.zclient import ZimbraClient
 from test import pconstant
+import logging
+import sys
 
 
 def get_info():
     p = load_properties()
 
     transport = SoapTransport()
-    transport.debug = 1
     transport.soap_url = soap.soap_url(p[pconstant.HOSTNAME])
 
     auth = SoapAuthenticator()
@@ -58,4 +59,6 @@ def get_info():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
+
     get_info()

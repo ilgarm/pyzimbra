@@ -33,13 +33,14 @@ from pyzimbra.soap_transport import SoapTransport
 from pyzimbra.zclient import ZimbraClient
 from test import pconstant
 import SOAPpy
+import logging
+import sys
 
 
 def get_account():
     p = load_properties()
 
     transport = SoapTransport()
-    transport.debug = 1
     transport.soap_url = soap.admin_soap_url(p[pconstant.ADMIN_HOSTNAME])
 
     auth = SoapAuthenticator()
@@ -63,4 +64,6 @@ def get_account():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
+
     get_account()
