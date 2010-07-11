@@ -31,7 +31,7 @@ from pyzimbra.base import ZimbraClientException
 from pyzimbra.soap_auth import SoapAuthenticator
 from pyzimbra.soap_transport import SoapTransport
 from test import pconstant
-from test.sample.util import load_properties
+from client.sample.util import load_properties
 
 
 def authenticate():
