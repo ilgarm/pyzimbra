@@ -29,71 +29,65 @@ Zimbra client related methods and classes.
 from pyzimbra import util
 from pyzimbra.auth import AuthException
 from pyzimbra.base import ZimbraClientException
+from pyzimbra.soap_auth import SoapAuthenticator
+from pyzimbra.soap_transport import SoapTransport
+import abc
 
 
-class ZimbraClient(object):
+class ZimbraSoapClient(object):
     """
     Zimbra client main class.
     """
+    __metaclass__ = abc.ABCMeta
+
     # --------------------------------------------------------------- properties
-    auth_token = property(lambda self: self._auth_token,
-                          None)
     transport = property(lambda self: self._transport,
                          lambda self, v: setattr(self, '_transport', v))
+    authenticator = property(lambda self: self._authenticator,
+                             lambda self, v: setattr(self, '_authenticator', v))
+    auth_token = property(lambda self: self._auth_token,
+                          lambda self, v: setattr(self, '_auth_token', v))
+
 
     # -------------------------------------------------------------------- bound
-    def __init__(self):
-        self._auth_token = None
-        self.transport = None
+    def __init__(self, soap_url, domains={}, proxy_url=None):
+        self.transport = SoapTransport()
+        self.transport.soap_url = soap_url
+        
+        if proxy_url != None:
+            self.transport.proxy_url = proxy_url
+
+        self.authenticator = SoapAuthenticator()
+        self.authenticator.domains = domains
+        
+        self.auth_token = None
+
 
     # ------------------------------------------------------------------ unbound
-    def authenticate_admin(self, authenticator, account_name, password):
-        """
-        Authenticates zimbra administrative account.
-        @param authenticator: authenticator to use
-        @param account_name: account email address
-        @param password: account password
-        @raise AuthException: if authentication fails
-        @raise SoapException: if soap communication fails
-        """
-        if self.transport == None:
-            raise ZimbraClientException('Invalid transport')
-
-        self._auth_token = authenticator.authenticate_admin(self.transport,
-                                                            account_name,
-                                                            password)
-
-    def authenticate(self, authenticator, account_name, password):
-        """
-        Authenticates zimbra account.
-        @param authenticator: authenticator to use
-        @param account_name: account email address
-        @param password: account password
-        @raise AuthException: if authentication fails
-        @raise SoapException: if soap communication fails
-        """
-        if self.transport == None:
-            raise ZimbraClientException('Invalid transport')
-
-        self._auth_token = authenticator.authenticate(self.transport,
-                                                      account_name, password)
-
-
-    def invoke(self, ns, request_name, params, auth_token=None):
+    def invoke(self, ns, request_name, params):
         """
         Invokes zimbra method using established authentication session.
         @param req: zimbra request
-        @param auth_token: alternative authentication session,
-          if not provided existing one will be used 
+        @parm params: request params
         @return: zimbra response
         @raise AuthException: if authentication fails
         @raise SoapException: wrapped server exception
         """
-        if self.auth_token == None and auth_token == None:
+        if self.auth_token == None:
             raise AuthException('Unable to invoke zimbra method')
 
         if util.empty(request_name):
             raise ZimbraClientException('Invalid request')
 
-        token = auth_token if auth_token != None else self._auth_token
-        return self.transport.invoke(ns, request_name, params, token)
+        return self.transport.invoke(ns, request_name, params, self.auth_token)
+
+
+    @abc.abstractmethod
+    def authenticate(self, account_name, password):
+        """
+        Authenticates zimbra account.
+        @param account_name: account email address
+        @param password: account password
+        @raise AuthException: if authentication fails
+        @raise SoapException: if soap communication fails
+        """

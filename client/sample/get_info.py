@@ -27,10 +27,8 @@ Account info samples.
 @author: ilgar
 """
 from client.sample.util import load_properties
-from pyzimbra import sconstant, zconstant, soap
-from pyzimbra.soap_auth import SoapAuthenticator
-from pyzimbra.soap_transport import SoapTransport
-from pyzimbra.zclient import ZimbraClient
+from pyzimbra import soap, sconstant
+from pyzimbra.z.client import ZimbraClient
 from test import pconstant
 import logging
 import sys
@@ -39,23 +37,14 @@ import sys
 def get_info():
     p = load_properties()
 
-    transport = SoapTransport()
-    transport.soap_url = soap.soap_url(p[pconstant.HOSTNAME])
-
-    auth = SoapAuthenticator()
-
-    zclient = ZimbraClient()
-    zclient.transport = transport
-
-    zclient.authenticate(auth, p[pconstant.ACCOUNT_NAME], p[pconstant.PASSWORD])
+    zclient = ZimbraClient(soap.soap_url(p[pconstant.HOSTNAME]))
+    zclient.authenticate(p[pconstant.ACCOUNT_NAME], p[pconstant.PASSWORD])
 
     params = {sconstant.A_SECTIONS: sconstant.V_MBOX}
-    res = zclient.invoke(zconstant.NS_ZIMBRA_ACC_URL,
-                         sconstant.GetInfoRequest,
-                         params)
+    info = zclient.get_info(params)
 
-    print res
-    print res.name
+    print info
+    print info.name
 
 
 if __name__ == '__main__':

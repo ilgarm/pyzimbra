@@ -31,7 +31,6 @@ from test.tests.soap import SoapTest
 from test.tests.soap_auth import SoapAuthTest
 from test.tests.soap_transport import SoapHttpTransportTest
 from test.tests.util import UtilTest
-from test.tests.zclient import ZimbraClientTest
 import unittest
 
 

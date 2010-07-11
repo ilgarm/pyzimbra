@@ -163,8 +163,7 @@ class SoapHttpTransport(SOAPpy.Client.HTTPTransport):
         if isinstance(exc, urllib2.HTTPError):
             try:
                 data = exc.read()
-                if self.transport.debug == 1:
-                    print data
+                self.log.debug(data)
 
                 t = SOAPpy.Parser.parseSOAP(data)
                 message = '%s:%s' % (t.Fault.faultcode, t.Fault.faultstring)
