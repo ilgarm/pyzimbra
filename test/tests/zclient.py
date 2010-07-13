@@ -27,7 +27,7 @@
 from pyzimbra import zconstant, sconstant
 from pyzimbra.auth import AuthException
 from pyzimbra.base import ZimbraClientException
-from pyzimbra.zclient import ZimbraClient
+from pyzimbra.z.client import ZimbraClient
 from test.base import BaseTest
 from test.mock.auth import MockAuthenticator
 from test.mock.soap import MockTransport
@@ -46,55 +46,52 @@ class ZimbraClientTest(BaseTest, unittest.TestCase):
 
 
     # -------------------------------------------------------------------- tests
-    def testZimbraClientNoTransport(self):
-
-        zclient = ZimbraClient()
-
-        self.assertRaises(ZimbraClientException, zclient.authenticate,
-                          MockAuthenticator(), self.account_name, self.password)
-
-
-    def testZimbraClientNoAuth(self):
-
-        zclient = ZimbraClient()
-
-        self.assertRaises(AuthException, zclient.invoke, '', '', {}, None)
-
-
     def testZimbraClientAuth(self):
 
-        zclient = ZimbraClient()
+        zclient = ZimbraClient('')
         zclient.transport = MockTransport()
+        zclient.authenticator = MockAuthenticator()
 
-        zclient.authenticate(MockAuthenticator(),
-                             self.account_name, self.password)
+        zclient.authenticate(self.account_name, self.password)
 
 
     def testZimbraClientWrongAuth(self):
 
-        zclient = ZimbraClient()
+        zclient = ZimbraClient('')
         zclient.transport = MockTransport()
+        zclient.authenticator = MockAuthenticator()
 
         self.assertRaises(AuthException, zclient.authenticate,
-                          MockAuthenticator(), self.account_name, 'wrong')
+                          self.account_name, 'wrong')
+
+
+    def testZimbraClientNoAuth(self):
+
+        zclient = ZimbraClient('')
+        zclient.transport = MockTransport()
+        zclient.authenticator = MockAuthenticator()
+
+        self.assertRaises(AuthException, zclient.invoke, '', '', {})
 
 
     def testZimbraClientNoRequest(self):
 
-        zclient = ZimbraClient()
+        zclient = ZimbraClient('')
         zclient.transport = MockTransport()
-        zclient.authenticate(MockAuthenticator(),
-                             self.account_name, self.password)
+        zclient.authenticator = MockAuthenticator()
 
-        self.assertRaises(ZimbraClientException, zclient.invoke, '', '', {}, None)
+        zclient.authenticate(self.account_name, self.password)
+
+        self.assertRaises(ZimbraClientException, zclient.invoke, '', '', {})
 
 
     def testZimbraClientRequest(self):
 
-        zclient = ZimbraClient()
+        zclient = ZimbraClient('')
         zclient.transport = MockTransport()
-        zclient.authenticate(MockAuthenticator(),
-                             self.account_name, self.password)
+        zclient.authenticator = MockAuthenticator()
+
+        zclient.authenticate(self.account_name, self.password)
 
         params = {}
         res = zclient.invoke(zconstant.NS_ZIMBRA_ACC_URL,

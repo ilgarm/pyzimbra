@@ -30,6 +30,7 @@ from test.tests.auth import AuthTest
 from test.tests.soap import SoapTest
 from test.tests.soap_auth import SoapAuthTest
 from test.tests.soap_transport import SoapHttpTransportTest
+from test.tests.zclient import ZimbraClientTest
 from test.tests.util import UtilTest
 import unittest
 
