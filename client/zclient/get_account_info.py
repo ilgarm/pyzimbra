@@ -20,38 +20,19 @@
 # 
 # You should have received a copy of the GNU Lesser General Public License
 # along with Pyzimbra.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+################################################################################.
 
 @author: ilgar
 """
+from client.util import init_client
 
-CONTEXT = 'context'
 
-AuthRequest = 'AuthRequest'
-AuthResponse = 'AuthResponse'
-ChangePasswordRequest = 'ChangePasswordRequest'
-ChangePasswordResponse = 'ChangePasswordResponse'
-GetAccountRequest = 'GetAccountRequest'
-GetAccountResponse = 'GetAccountResponse'
-GetAccountInfoRequest = 'GetAccountInfoRequest'
-GetAccountInfoResponse = 'GetAccountInfoResponse'
-GetInfoRequest = 'GetInfoRequest'
-GetInfoResponse = 'GetInfoResponse'
+@init_client
+def run(p, zclient):
 
-E_AUTH_TOKEN = 'authToken'
-E_SESSION_ID = 'sessionId'
-E_ACCOUNT = 'account'
-E_PREAUTH = 'preauth'
-E_PASSWORD = 'password'
-E_OLD_PASSWORD = 'oldPassword'
-E_NAME = 'name'
+    info = zclient.get_account_info()
+    print info
 
-A_BY = 'by'
-A_EXPIRES = 'expires'
-A_ID = 'id'
-A_SECTIONS = 'sections'
-A_TIMESTAMP = 'timestamp'
 
-V_ID = 'id'
-V_NAME = 'name'
-V_MBOX = 'mbox'
+if __name__ == '__main__':
+    run()

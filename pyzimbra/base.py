@@ -30,6 +30,21 @@ import abc
 import traceback
 
 
+class ZObject(object):
+    """
+    Base class for data objects.
+    """
+    __metaclass__ = abc.ABCMeta
+
+    # ------------------------------------------------------------------ unbound
+    @abc.abstractmethod
+    def parse(self, res):
+        """
+        Parses xml structure.
+        @param res: xml response from zimbra
+        """
+
+
 class ZimbraClientException(Exception):
     """
     Zimbra client exception.
@@ -53,6 +68,10 @@ class ZimbraClientException(Exception):
                 self.tracebacks = cause.tracebacks
         list = traceback.format_exc().split('\n')[1:]
         self.tracebacks.insert(0, '\n'.join(list))
+
+
+    def __str__(self):
+        return self.__unicode__()
 
 
     def __unicode__(self):

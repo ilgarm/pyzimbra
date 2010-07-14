@@ -27,6 +27,7 @@ Zimbra non-privileged client.
 @author: ilgar
 """
 from pyzimbra import sconstant, zconstant
+from pyzimbra.z.zobject.account import AccountInfo
 from pyzimbra.zclient import ZimbraSoapClient
 import SOAPpy
 
@@ -68,9 +69,30 @@ class ZimbraClient(ZimbraSoapClient):
                     params)
 
 
-    def get_info(self, params={}):
+    def get_account_info(self):
         """
         Gets account info.
+        @return: AccountInfo
+        """
+        attrs = {sconstant.A_BY: sconstant.V_NAME}
+        account = SOAPpy.Types.stringType(data=self.auth_token.account_name,
+                                          attrs=attrs)
+
+        params = {sconstant.E_ACCOUNT: account}
+
+        res = self.invoke(zconstant.NS_ZIMBRA_ACC_URL,
+                          sconstant.GetAccountInfoRequest,
+                          params)
+
+        info = AccountInfo()
+        info.parse(res)
+
+        return info
+
+
+    def get_info(self, params={}):
+        """
+        Gets mailbox info.
         @param params: params to retrieve
         @return: AccountInfo
         """

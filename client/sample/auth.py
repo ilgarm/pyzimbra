@@ -47,7 +47,7 @@ def authenticate():
                                    p[pconstant.ACCOUNT_NAME],
                                    p[pconstant.PASSWORD])
 
-    print auth_token.token
+    print auth_token
 
 
 def pre_authenticate():
@@ -61,7 +61,7 @@ def pre_authenticate():
     auth.domains = p[pconstant.DOMAINS]
     auth_token = auth.authenticate(transport, p[pconstant.ACCOUNT_NAME])
 
-    print auth_token.token
+    print auth_token
 
 
 if __name__ == '__main__':

@@ -64,7 +64,7 @@ class ZimbraSoapClient(object):
 
 
     # ------------------------------------------------------------------ unbound
-    def invoke(self, ns, request_name, params):
+    def invoke(self, ns, request_name, params={}):
         """
         Invokes zimbra method using established authentication session.
         @param req: zimbra request

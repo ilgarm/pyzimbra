@@ -60,6 +60,15 @@ class AuthToken(object):
         self.session_id = None
 
 
+    def __str__(self):
+        return self.__unicode__()
+
+
+    def __unicode__(self):
+        return ('account_name: %s; token: %s; session_id: %s'
+                % (self.account_name, self.token, self.session_id))
+
+
 class Authenticator(object):
     """
     Authenticator provides methods to authenticate using username/password 
