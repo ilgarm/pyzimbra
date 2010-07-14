@@ -26,7 +26,7 @@ Account info samples.
 
 @author: ilgar
 """
-from client.sample.util import load_properties
+from client.util import load_properties
 from pyzimbra import sconstant, zconstant, soap
 from pyzimbra.z.admin import ZimbraAdmin
 from test import pconstant

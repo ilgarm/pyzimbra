@@ -26,7 +26,7 @@ Authentication samples.
 
 @author: ilgar
 """
-from client.sample.util import load_properties
+from client.util import load_properties
 from pyzimbra import soap
 from pyzimbra.base import ZimbraClientException
 from pyzimbra.soap_auth import SoapAuthenticator

@@ -27,11 +27,15 @@ Account info samples.
 @author: ilgar
 """
 from ConfigParser import ConfigParser
+from pyzimbra import soap
+from pyzimbra.z.client import ZimbraClient
 from test import pconstant
+import logging
+import sys
 
 
 def load_properties():
-    properties = "client-local.properties"
+    properties = "../client-local.properties"
     cfg = ConfigParser()
     cfg.read(properties)
 
@@ -56,3 +60,16 @@ def load_properties():
     p[pconstant.PASSWORD] = cfg.get(pconstant.AUTH, pconstant.PASSWORD)
 
     return p
+
+
+def init_client(f):
+    def call():
+        logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
+
+        p = load_properties()
+
+        zclient = ZimbraClient(soap.soap_url(p[pconstant.HOSTNAME]))
+        zclient.authenticate(p[pconstant.ACCOUNT_NAME], p[pconstant.PASSWORD])
+
+        return f(p, zclient)
+    return call

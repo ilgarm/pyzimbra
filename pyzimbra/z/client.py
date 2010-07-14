@@ -28,6 +28,7 @@ Zimbra non-privileged client.
 """
 from pyzimbra import sconstant, zconstant
 from pyzimbra.zclient import ZimbraSoapClient
+import SOAPpy
 
 
 class ZimbraClient(ZimbraSoapClient):
@@ -54,6 +55,17 @@ class ZimbraClient(ZimbraSoapClient):
         @param current_password: current password
         @param new_password: new password
         """
+        attrs = {sconstant.A_BY: sconstant.V_NAME}
+        account = SOAPpy.Types.stringType(data=self.auth_token.account_name,
+                                          attrs=attrs)
+
+        params = {sconstant.E_ACCOUNT: account,
+                  sconstant.E_OLD_PASSWORD: current_password,
+                  sconstant.E_PASSWORD: new_password}
+
+        self.invoke(zconstant.NS_ZIMBRA_ACC_URL,
+                    sconstant.ChangePasswordRequest,
+                    params)
 
 
     def get_info(self, params={}):
