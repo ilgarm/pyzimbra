@@ -20,34 +20,21 @@
 # 
 # You should have received a copy of the GNU Lesser General Public License
 # along with Pyzimbra.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
-
-Account info samples.
+################################################################################.
 
 @author: ilgar
 """
-from client.util import load_properties
-from pyzimbra import soap, sconstant
-from pyzimbra.z.client import ZimbraClient
-from test import pconstant
-import logging
-import sys
+from client.util import init_client
+from pyzimbra import sconstant
 
 
-def get_info():
-    p = load_properties()
-
-    zclient = ZimbraClient(soap.soap_url(p[pconstant.HOSTNAME]))
-    zclient.authenticate(p[pconstant.ACCOUNT_NAME], p[pconstant.PASSWORD])
+@init_client
+def run(p, zclient):
 
     params = {sconstant.A_SECTIONS: sconstant.V_MBOX}
     info = zclient.get_info(params)
-
     print info
-    print info.name
 
 
 if __name__ == '__main__':
-    logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
-
-    get_info()
+    run()

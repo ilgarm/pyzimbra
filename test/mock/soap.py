@@ -46,7 +46,7 @@ class MockTransport(ZimbraClientTransport):
 
 
     # ------------------------------------------------------------------ unbound
-    def invoke(self, ns, request_name, params, auth_token):
+    def invoke(self, ns, request_name, params, auth_token, simplify=False):
 
         if auth_token.token == None:
             auth_token.token = self.token

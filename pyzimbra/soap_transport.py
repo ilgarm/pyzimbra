@@ -49,11 +49,16 @@ class SoapTransport(ZimbraClientTransport):
 
 
     # ------------------------------------------------------------------ unbound
-    def invoke(self, ns, request_name, params, auth_token):
+    def invoke(self, ns, request_name, params, auth_token, simplify=False):
         """
         Invokes zimbra soap request.
         """
-        ZimbraClientTransport.invoke(self, ns, request_name, params, auth_token)
+        ZimbraClientTransport.invoke(self,
+                                     ns,
+                                     request_name,
+                                     params,
+                                     auth_token,
+                                     simplify)
 
         headers = SOAPpy.Types.headerType()
 
@@ -65,7 +70,11 @@ class SoapTransport(ZimbraClientTransport):
             context._ns = (zconstant.SOAP_DEFAULT_PREFIX, zconstant.NS_ZIMBRA_URL)
             headers.context = context
 
-        proxy = SOAPpy.SOAPProxy(self.soap_url, ns, header=headers, noroot=1)
+        proxy = SOAPpy.SOAPProxy(self.soap_url,
+                                 ns,
+                                 header=headers,
+                                 noroot=1,
+                                 simplify_objects=simplify)
         proxy.config.debug = self.log.isEnabledFor(logging.DEBUG)
         proxy.config.strictNamespaces = 0
         proxy.config.buildWithNamespacePrefix = 0

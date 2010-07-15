@@ -73,3 +73,23 @@ def init_client(f):
 
         return f(p, zclient)
     return call
+
+
+def init_proxied_client(f):
+    def call():
+        logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
+
+        p = load_properties()
+
+        proxy_url = soap.proxy_url(p[pconstant.PROXY_HOSTNAME],
+                                   p[pconstant.PROXY_USERNAME],
+                                   p[pconstant.PROXY_PASSWORD],
+                                   p[pconstant.PROXY_PORT],
+                                   p[pconstant.PROXY_SCHEME])
+    
+        zclient = ZimbraClient(soap.soap_url(p[pconstant.HOSTNAME]),
+                               proxy_url=proxy_url)
+        zclient.authenticate(p[pconstant.ACCOUNT_NAME], p[pconstant.PASSWORD])
+
+        return f(p, zclient)
+    return call

@@ -108,13 +108,14 @@ class ZimbraClientTransport(object):
 
     # ------------------------------------------------------------------ unbound
     @abc.abstractmethod
-    def invoke(self, ns, request_name, params, auth_token):
+    def invoke(self, ns, request_name, params, auth_token, simplify):
         """
         Invokes zimbra request.
         @param ns: namespace of the request method
         @param request_name: name of the request method
         @param params: parameters to pass to method call
         @param auth_token: authentication token to use for session
+        @param simplify: True to return python object, False to return xml struct
         @return: zimbra response
         """
         if auth_token == None:

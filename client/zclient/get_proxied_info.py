@@ -20,40 +20,21 @@
 # 
 # You should have received a copy of the GNU Lesser General Public License
 # along with Pyzimbra.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
-
-Account info samples.
+################################################################################.
 
 @author: ilgar
 """
-from client.util import load_properties
-from pyzimbra import soap, sconstant
-from pyzimbra.z.client import ZimbraClient
-from test import pconstant
-import logging
-import sys
+from client.util import init_proxied_client
+from pyzimbra import sconstant
 
 
-def get_proxied_info():
-    p = load_properties()
-
-    proxy_url = soap.proxy_url(p[pconstant.PROXY_HOSTNAME],
-                               p[pconstant.PROXY_USERNAME],
-                               p[pconstant.PROXY_PASSWORD],
-                               p[pconstant.PROXY_PORT],
-                               p[pconstant.PROXY_SCHEME])
-    zclient = ZimbraClient(soap.soap_url(p[pconstant.HOSTNAME]),
-                           proxy_url=proxy_url)
-    zclient.authenticate(p[pconstant.ACCOUNT_NAME], p[pconstant.PASSWORD])
+@init_proxied_client
+def run(p, zclient):
 
     params = {sconstant.A_SECTIONS: sconstant.V_MBOX}
     info = zclient.get_info(params)
-
     print info
-    print info.name
 
 
 if __name__ == '__main__':
-    logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
-
-    get_proxied_info()
+    run()
