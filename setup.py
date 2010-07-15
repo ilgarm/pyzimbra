@@ -29,7 +29,7 @@ Distutil setup.
 from distutils.core import setup
 
 
-files = ["*"]
+files = ["*", "z/*"]
 
 setup(name = 'pyzimbra',
     version = '0.1',
@@ -38,7 +38,7 @@ setup(name = 'pyzimbra',
     author = 'Ilgar Mashayev',
     author_email = 'pyzimbra@lab.az',
     url = 'http://github.com/ilgarm/pyzimbra',
-    packages = ['pyzimbra'],
+    packages = ['pyzimbra','pyzimbra/z'],
     package_data = {'package' : files },
     long_description = """This library aimed to help those who want to talk to zimbra instance from python.""" 
 )
