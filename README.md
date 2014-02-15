@@ -7,7 +7,9 @@ Current version is 0.1. Released under [LGPL](http://www.gnu.org/licenses/lgpl.h
 
 ### Features
 
-There is not much, actually. What is possible at the moment:
+There is not much, actually.
+
+What is possible at the moment:
  * authentication to zimbra using account name and password
  * pre-authentication to zimbra using domain key
  * administrative login to zimbra
@@ -17,8 +19,6 @@ There is not much, actually. What is possible at the moment:
 
 What is missing and coming in the future:
  * zimbra client api: set of python classes to use instead of dealing with xml directly
-
-Release notes are available in [README](http://github.com/ilgarm/pyzimbra/blob/master/README) file.
 
 ### Prerequisites
 
