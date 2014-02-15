@@ -1,17 +1,41 @@
-= Zimbra Python Client =
+# Zimbra Python Client (pyzimbra)
 
-Report a bug at: http://github.com/ilgarm/pyzimbra/issues
-Documentation available online at: http://trac.lab.az/pyzimbra/wiki
+### About
 
-=== Release notes ===
+This library aimed to help those who want to talk to zimbra instance from python.
+Current version is 0.1. Released under [LGPL](http://www.gnu.org/licenses/lgpl.html) license.
 
-version 0.1 - current
+### Features
 
-ticket:2 - zimbra client authentication
-ticket:8 - zimbra soap wrapper
-ticket:22 - rewrite all xml manipulations to use single library, minidom or lxml.etree
-ticket:31 - add proxy support
-ticket:27 - error and exception handling
-ticket:33 - switch to SOAPpy
-ticket:20 - zimbra client preauthentication
-ticket:21 - zimbra client administrative authentication
+There is not much, actually. What is possible at the moment:
+ * authentication to zimbra using account name and password
+ * pre-authentication to zimbra using domain key
+ * administrative login to zimbra
+ * execute any method via soap by preparing xml request
+ * get back proper exception message and code from zimbra
+ * use library behind proxy
+
+What is missing and coming in the future:
+ * zimbra client api: set of python classes to use instead of dealing with xml directly
+
+Release notes are available in [README](http://github.com/ilgarm/pyzimbra/blob/master/README) file.
+
+### Prerequisites
+
+Install [SOAPpy](http://pywebsvcs.sourceforge.net/)
+
+### Installation
+
+    #!sh
+    tar xfz pyzimbra-0.1.tar.gz
+    cd pyzimbra-0.1
+    python setup.py install
+
+### How to use
+
+Several examples are available on repository under client/sample directory.
+Please, note that client and test directories from the source tree are not part of binary distribution.
+
+### Contacts
+
+For any purpose, I am available at the following address: [project name]@lab.az
